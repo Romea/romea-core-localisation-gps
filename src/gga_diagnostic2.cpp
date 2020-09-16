@@ -76,7 +76,7 @@ bool DiagnosticGGAFix2::checkFrameIsComplete_(const GGAFrame & ggaFrame)
   else
   {
     report_.status=DiagnosticStatus::ERROR;
-    report_.message="GGA fix incomplete.";
+    report_.message="GGA fix is incomplete.";
     return false;
   }
 }

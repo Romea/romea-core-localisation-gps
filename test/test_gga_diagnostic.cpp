@@ -1,10 +1,10 @@
 // gtest
 #include <gtest/gtest.h>
-#
+
 //romea
 #include "romea_gps_localisation_plugin/gga_diagnostic2.hpp"
 
-romea::GGAFrame goodGGAFrame()
+romea::GGAFrame minimalGoodGGAFrame()
 {
   romea::GGAFrame frame;
   frame.talkerId=romea::TalkerId::GN;
@@ -26,7 +26,7 @@ class TestGGAFixDiagnostic : public ::testing::Test
 public:
 
   TestGGAFixDiagnostic():
-    frame(goodGGAFrame()),
+    frame(minimalGoodGGAFrame()),
     diagnostic(romea::FixQuality::RTK_FIX)
   {
   }
@@ -36,7 +36,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-TEST_F(TestGGAFixDiagnostic, checkGoodFrame)
+TEST_F(TestGGAFixDiagnostic, checkMinimalGoodFrame)
 {
   EXPECT_EQ(diagnostic.evaluate(frame),romea::DiagnosticStatus::OK);
   EXPECT_EQ(diagnostic.getReport().status,romea::DiagnosticStatus::OK);
@@ -60,7 +60,7 @@ void checkMissingData(romea::DiagnosticGGAFix2 & diagnostic,
 {
   EXPECT_EQ(diagnostic.evaluate(frame),romea::DiagnosticStatus::ERROR);
   EXPECT_EQ(diagnostic.getReport().status,romea::DiagnosticStatus::ERROR);
-  EXPECT_STREQ(diagnostic.getReport().message.c_str(),"GGA fix incomplete.");
+  EXPECT_STREQ(diagnostic.getReport().message.c_str(),"GGA fix is incomplete.");
   EXPECT_STREQ(diagnostic.getReport().info.at(missingDataName).c_str(),"");
 }
 

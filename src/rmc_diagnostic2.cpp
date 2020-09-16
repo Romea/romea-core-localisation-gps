@@ -29,12 +29,12 @@ void DiagnosticRMCTrackAngle2::checkFixIsReliable_(const RMCFrame & rmcFrame)
   if(*rmcFrame.speedOverGroundInMeterPerSecond<minimalSpeedOverGround_)
   {
     report_.status= DiagnosticStatus::WARN;
-    report_.message= "Track angle not reliable.";
+    report_.message= "RMC track angle not reliable.";
   }
   else
   {
-    report_.status= DiagnosticStatus::WARN;
-    report_.message= "Track angle OK.";
+    report_.status= DiagnosticStatus::OK;
+    report_.message= "RMC track angle OK.";
   }
 }
 
@@ -56,7 +56,7 @@ bool DiagnosticRMCTrackAngle2::checkFrameIsComplete_(const RMCFrame & rmcFrame)
   else
   {
     report_.status=DiagnosticStatus::ERROR;
-    report_.message="frame is incomplete";
+    report_.message="RMC track angle is incomplete.";
     return false;
   }
 }
@@ -67,7 +67,7 @@ void DiagnosticRMCTrackAngle2::setReportInfos_(const RMCFrame & rmcFrame)
   setReportInfo(report_,"talker",rmcFrame.talkerId);
   setReportInfo(report_,"speed_over_ground",rmcFrame.speedOverGroundInMeterPerSecond);
   setReportInfo(report_,"track_angle",rmcFrame.trackAngleTrue);
-  setReportInfo(report_,"magnetic deviation", rmcFrame.magneticDeviation);
+  setReportInfo(report_,"magnetic_deviation", rmcFrame.magneticDeviation);
 }
 
 }// namespace
