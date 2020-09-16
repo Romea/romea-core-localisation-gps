@@ -1,5 +1,5 @@
-#ifndef _romea_RMCDiagnostic2_hpp_
-#define _romea_RMCDiagnostic2_hpp_
+#ifndef _romea_CheckRMCTrackAngle_hpp_
+#define _romea_CheckRMCTrackAngle_hpp_
 
 //romea
 #include <romea_common/diagnostic/DiagnosticReport.hpp>
@@ -7,12 +7,12 @@
 
 namespace romea {
 
-class  DiagnosticRMCTrackAngle2
+class  CheckupRMCTrackAngle
 {
 
 public:
 
-  DiagnosticRMCTrackAngle2(const double & minimalSpeedOverGround);
+  CheckupRMCTrackAngle(const double & minimalSpeedOverGround);
 
   DiagnosticStatus evaluate(const RMCFrame & rmcFrame);
 
@@ -20,9 +20,11 @@ public:
 
 private :
 
-  void setReportInfos_(const RMCFrame & rmcFrame);
   bool checkFrameIsComplete_(const RMCFrame & rmcFrame);
   void checkFixIsReliable_(const RMCFrame & rmcFrame);
+
+  void setReportInfos_(const RMCFrame & rmcFrame);
+  void setDiagnostic_(const DiagnosticStatus & status, const std::string & message);
 
 private:
 

@@ -1,4 +1,4 @@
-#include "romea_gps_localisation_plugin/gga_diagnostic2.hpp"
+#include "romea_gps_localisation_plugin/CheckupGGAFix.hpp"
 
 namespace
 {
@@ -9,27 +9,28 @@ const unsigned short MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX=6;
 namespace romea {
 
 //-----------------------------------------------------------------------------
-DiagnosticGGAFix2::DiagnosticGGAFix2(const FixQuality & minimalFixQuality):
+CheckupGGAFix::CheckupGGAFix(const FixQuality & minimalFixQuality):
   report_(),
   minimalFixQuality_(minimalFixQuality)
 {
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticStatus DiagnosticGGAFix2::evaluate(const GGAFrame & ggaFrame)
+DiagnosticStatus CheckupGGAFix::evaluate(const GGAFrame & ggaFrame)
 {
+  report_.diagnostics.clear();
   if(checkFrameIsComplete_(ggaFrame))
   {
     checkFixIsReliable_(ggaFrame);
   }
 
   setReportInfos_(ggaFrame);
-  return report_.status;
+  return worseStatus(report_.diagnostics);
 }
 
 
 //-----------------------------------------------------------------------------
-void DiagnosticGGAFix2::setReportInfos_(const GGAFrame & ggaFrame)
+void CheckupGGAFix::setReportInfos_(const GGAFrame & ggaFrame)
 {
   setReportInfo(report_,"talker",ggaFrame.talkerId);
   setReportInfo(report_,"geoid_height",ggaFrame.geoidHeight);
@@ -61,7 +62,7 @@ void DiagnosticGGAFix2::setReportInfos_(const GGAFrame & ggaFrame)
 }
 
 //-----------------------------------------------------------------------------
-bool DiagnosticGGAFix2::checkFrameIsComplete_(const GGAFrame & ggaFrame)
+bool CheckupGGAFix::checkFrameIsComplete_(const GGAFrame & ggaFrame)
 {
   if(ggaFrame.latitude &&
      ggaFrame.longitude &&
@@ -75,35 +76,26 @@ bool DiagnosticGGAFix2::checkFrameIsComplete_(const GGAFrame & ggaFrame)
   }
   else
   {
-    report_.status=DiagnosticStatus::ERROR;
-    report_.message="GGA fix is incomplete.";
+    addDiagnostic_(DiagnosticStatus::ERROR,"GGA fix is incomplete.");
     return false;
   }
 }
 
 //-----------------------------------------------------------------------------
-void DiagnosticGGAFix2::checkFixIsReliable_(const GGAFrame & ggaFrame)
+void CheckupGGAFix::checkFixIsReliable_(const GGAFrame & ggaFrame)
 {
-  warningMessages_.clear();
-
   if(*ggaFrame.fixQuality==FixQuality::SIMULATION_FIX ||
      (checkHorizontalDilutionOfPrecision_(ggaFrame)&
       checkNumberSatellitesUsedToComputeFix_(ggaFrame)&
       checkFixQuality_(ggaFrame)))
   {
-    report_.status=DiagnosticStatus::OK;
-    report_.message="GGA fix OK.";
-  }
-  else
-  {
-    report_.status=DiagnosticStatus::WARN;
-    makeReportWarningMessage_();
+    addDiagnostic_(DiagnosticStatus::OK,"GGA fix OK.");
   }
 }
 
 
 //-----------------------------------------------------------------------------
-bool DiagnosticGGAFix2::checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFrame)
+bool CheckupGGAFix::checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFrame)
 {
   if(*ggaFrame.horizontalDilutionOfPrecision<
      MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION)
@@ -112,13 +104,13 @@ bool DiagnosticGGAFix2::checkHorizontalDilutionOfPrecision_(const GGAFrame & gga
   }
   else
   {
-    warningMessages_.push_back("HDOP is two high");
+    addDiagnostic_(DiagnosticStatus::WARN,"HDOP is two high.");
     return false;
   }
 }
 
 //-----------------------------------------------------------------------------
-bool DiagnosticGGAFix2::checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaFrame)
+bool CheckupGGAFix::checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaFrame)
 {
   if(*ggaFrame.numberSatellitesUsedToComputeFix>=
      MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX)
@@ -127,13 +119,13 @@ bool DiagnosticGGAFix2::checkNumberSatellitesUsedToComputeFix_(const GGAFrame & 
   }
   else
   {
-    warningMessages_.push_back("not enough satellites to compute fix");
+    addDiagnostic_(DiagnosticStatus::WARN,"Not enough satellites to compute fix.");
     return false;
   }
 }
 
 //-----------------------------------------------------------------------------
-bool DiagnosticGGAFix2::checkFixQuality_(const GGAFrame & ggaFrame)
+bool CheckupGGAFix::checkFixQuality_(const GGAFrame & ggaFrame)
 {
   if(*ggaFrame.fixQuality>=minimalFixQuality_)
   {
@@ -141,30 +133,23 @@ bool DiagnosticGGAFix2::checkFixQuality_(const GGAFrame & ggaFrame)
   }
   else
   {
-    warningMessages_.push_back("fix quality is too low");
+    addDiagnostic_(DiagnosticStatus::WARN,"Fix quality is too low.");
     return false;
   }
 }
 
 //-----------------------------------------------------------------------------
-void DiagnosticGGAFix2::makeReportWarningMessage_()
+const DiagnosticReport & CheckupGGAFix::getReport()const
 {
-  report_.message="GGA fix not reliable : ";
-  auto it = std::cbegin(warningMessages_);
-
-  report_.message+=*it;
-  while(++it!=std::cend(warningMessages_))
-  {
-    report_.message+=", ";
-    report_.message+= *it;
-  }
-  report_.message +=".";
+  return report_;
 }
 
 //-----------------------------------------------------------------------------
-const DiagnosticReport & DiagnosticGGAFix2::getReport()const
+void CheckupGGAFix::addDiagnostic_(const DiagnosticStatus & status, const std::string & message)
 {
-  return report_;
+  report_.diagnostics.push_back(Diagnostic());
+  report_.diagnostics.back().status=status;
+  report_.diagnostics.back().message=message;
 }
 
 }// namespace

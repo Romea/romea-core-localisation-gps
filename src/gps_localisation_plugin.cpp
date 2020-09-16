@@ -80,6 +80,17 @@ void GPSLocalisationPlugin::processGSV(const std::string & gsvSentence)
   }
 }
 
+//-----------------------------------------------------------------------------
+DiagnosticReport GPSLocalisationPlugin::makeDiagnosticReport()
+{
+  DiagnosticReport report;
+  report += gga_rate_diagnostic_.getReport();
+  report += rmc_rate_diagnostic_.getReport();
+  report += gga_fix_diagnostic_.getReport();
+  report += rmc_track_angle_diagnostic_.getReport();
+  return report;
+}
+
 //  switch (NMEAParsing::extractSentenceId(msg->sentence))
 //  {
 //  case NMEAParsing::SentenceID::GGA :

@@ -10,12 +10,12 @@
 
 namespace romea {
 
-class  DiagnosticGGAFix2
+class  CheckupGGAFix
 {
 
 public:
 
-  DiagnosticGGAFix2(const FixQuality &minimalFixQuality);
+  CheckupGGAFix(const FixQuality &minimalFixQuality);
 
   DiagnosticStatus evaluate(const GGAFrame & ggaFrame);
 
@@ -24,6 +24,7 @@ public:
 private :
 
   void setReportInfos_(const GGAFrame & ggaFrame);
+  void addDiagnostic_(const DiagnosticStatus & status, const std::string & message);
 
   bool checkFrameIsComplete_(const GGAFrame & ggaFrame);
   void checkFixIsReliable_(const GGAFrame & ggaFrame);
@@ -31,14 +32,11 @@ private :
   bool checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFrame);
   bool checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaFrame);
 
-  void makeReportWarningMessage_();
-
 private :
 
   DiagnosticReport report_;
   FixQuality minimalFixQuality_;
   double maximalHorizontalDilutionOfPrecision_;
-  std::list<std::string> warningMessages_;
 };
 
 

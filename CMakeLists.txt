@@ -32,8 +32,8 @@ include_directories(
     SYSTEM ${romea_filtering_INCLUDE_DIRS})
 
 add_library(romea_gps_localisation_plugin2
-    src/gga_diagnostic2.cpp
-    src/rmc_diagnostic2.cpp
+    src/CheckupGGAFix.cpp
+    src/CheckupRMCTrackAngle.cpp
     src/gps_localisation_plugin.cpp)
 
 target_link_libraries(romea_gps_localisation_plugin2 ${catkin_LIBRARIES})

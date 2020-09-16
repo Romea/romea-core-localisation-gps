@@ -1,18 +1,18 @@
-#include "romea_gps_localisation_plugin/rmc_diagnostic2.hpp"
+#include "romea_gps_localisation_plugin/CheckupRMCTrackAngle.hpp"
 
 namespace romea {
 
 
 //-----------------------------------------------------------------------------
-DiagnosticRMCTrackAngle2::DiagnosticRMCTrackAngle2(const double & minimalSpeedOverGround):
+CheckupRMCTrackAngle::CheckupRMCTrackAngle(const double & minimalSpeedOverGround):
   report_(),
   minimalSpeedOverGround_(minimalSpeedOverGround)
 {
-
+  report_.diagnostics.push_back(Diagnostic());
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticStatus DiagnosticRMCTrackAngle2::evaluate(const RMCFrame & rmcFrame)
+DiagnosticStatus CheckupRMCTrackAngle::evaluate(const RMCFrame & rmcFrame)
 {
 
   if(checkFrameIsComplete_(rmcFrame))
@@ -20,33 +20,30 @@ DiagnosticStatus DiagnosticRMCTrackAngle2::evaluate(const RMCFrame & rmcFrame)
     checkFixIsReliable_(rmcFrame);
   }
   setReportInfos_(rmcFrame);
-  return report_.status;
+  return report_.diagnostics.front().status;
 }
 
 //-----------------------------------------------------------------------------
-void DiagnosticRMCTrackAngle2::checkFixIsReliable_(const RMCFrame & rmcFrame)
+void CheckupRMCTrackAngle::checkFixIsReliable_(const RMCFrame & rmcFrame)
 {
   if(*rmcFrame.speedOverGroundInMeterPerSecond<minimalSpeedOverGround_)
   {
-    report_.status= DiagnosticStatus::WARN;
-    report_.message= "RMC track angle not reliable.";
+    setDiagnostic_(DiagnosticStatus::WARN,"RMC track angle not reliable.");
   }
   else
   {
-    report_.status= DiagnosticStatus::OK;
-    report_.message= "RMC track angle OK.";
+    setDiagnostic_(DiagnosticStatus::OK,"RMC track angle OK.");
   }
 }
 
 //-----------------------------------------------------------------------------
-const DiagnosticReport & DiagnosticRMCTrackAngle2::getReport() const
+const DiagnosticReport & CheckupRMCTrackAngle::getReport() const
 {
   return report_;
 }
 
-
 //-----------------------------------------------------------------------------
-bool DiagnosticRMCTrackAngle2::checkFrameIsComplete_(const RMCFrame & rmcFrame)
+bool CheckupRMCTrackAngle::checkFrameIsComplete_(const RMCFrame & rmcFrame)
 {
   if(rmcFrame.speedOverGroundInMeterPerSecond&&
      rmcFrame.trackAngleTrue)
@@ -55,19 +52,26 @@ bool DiagnosticRMCTrackAngle2::checkFrameIsComplete_(const RMCFrame & rmcFrame)
   }
   else
   {
-    report_.status=DiagnosticStatus::ERROR;
-    report_.message="RMC track angle is incomplete.";
+    setDiagnostic_(DiagnosticStatus::ERROR,"RMC track angle is incomplete.");
     return false;
   }
 }
 
 //-----------------------------------------------------------------------------
-void DiagnosticRMCTrackAngle2::setReportInfos_(const RMCFrame & rmcFrame)
+void CheckupRMCTrackAngle::setReportInfos_(const RMCFrame & rmcFrame)
 {
   setReportInfo(report_,"talker",rmcFrame.talkerId);
   setReportInfo(report_,"speed_over_ground",rmcFrame.speedOverGroundInMeterPerSecond);
   setReportInfo(report_,"track_angle",rmcFrame.trackAngleTrue);
   setReportInfo(report_,"magnetic_deviation", rmcFrame.magneticDeviation);
+}
+
+//-----------------------------------------------------------------------------
+void CheckupRMCTrackAngle::setDiagnostic_(const DiagnosticStatus & status, const std::string & message)
+{
+  Diagnostic & diagnostic = report_.diagnostics.front();
+  diagnostic.message = message;
+  diagnostic.status = status;
 }
 
 }// namespace
