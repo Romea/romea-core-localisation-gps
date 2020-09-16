@@ -38,3 +38,6 @@ add_library(romea_gps_localisation_plugin2
 
 target_link_libraries(romea_gps_localisation_plugin2 ${catkin_LIBRARIES})
 
+if(CATKIN_ENABLE_TESTING)
+  add_subdirectory(test)
+endif(CATKIN_ENABLE_TESTING)

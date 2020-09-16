@@ -1,0 +1,8 @@
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+catkin_add_gtest(${PROJECT_NAME}_test_gga_diagnostic test_gga_diagnostic.cpp )
+target_link_libraries(${PROJECT_NAME}_test_gga_diagnostic ${PROJECT_NAME})
+
+#catkin_add_gtest(${PROJECT_NAME}_test_rmc_diagnostic test_rmc_diagnostic.cpp )
+#target_link_libraries(${PROJECT_NAME}_test_rmc_diagnotic ${PROJECT_NAME})
+
