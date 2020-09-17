@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 //romea
-#include "romea_gps_localisation_plugin/CheckupRMCTrackAngle.hpp"
+#include "romea_localisation_gps/CheckupRMCTrackAngle.hpp"
 
 romea::RMCFrame minimalGoodRMCFrame()
 {

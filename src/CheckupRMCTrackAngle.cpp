@@ -1,4 +1,4 @@
-#include "romea_gps_localisation_plugin/CheckupRMCTrackAngle.hpp"
+#include "romea_localisation_gps/CheckupRMCTrackAngle.hpp"
 
 namespace romea {
 

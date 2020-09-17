@@ -1,4 +1,4 @@
-#include "romea_gps_localisation_plugin/gps_localisation_plugin.hpp"
+#include "romea_localisation_gps/LocalisationGPSPlugin.hpp"
 
 namespace
 {
@@ -9,7 +9,7 @@ const double DEFAULT_COURSE_ANGLE_STD = 20/180.*M_PI;
 namespace romea {
 
 //-----------------------------------------------------------------------------
-GPSLocalisationPlugin::GPSLocalisationPlugin(std::unique_ptr<GPSReceiver> gps,
+LocalisationGPSPlugin::LocalisationGPSPlugin(std::unique_ptr<GPSReceiver> gps,
                                              const FixQuality & minimalFixQuality,
                                              const double & minimalSpeedOverGround):
   gps_(std::move(gps)),
@@ -22,13 +22,13 @@ GPSLocalisationPlugin::GPSLocalisationPlugin(std::unique_ptr<GPSReceiver> gps,
 }
 
 //-----------------------------------------------------------------------------
-void GPSLocalisationPlugin::setAnchor(const GeodeticCoordinates & wgs84_anchor)
+void LocalisationGPSPlugin::setAnchor(const GeodeticCoordinates & wgs84_anchor)
 {
   enuConverter_.setAnchor(wgs84_anchor);
 }
 
 //-----------------------------------------------------------------------------
-bool GPSLocalisationPlugin::processGGA(const Duration & stamp,
+bool LocalisationGPSPlugin::processGGA(const Duration & stamp,
                                        const std::string & ggaSentence,
                                        ObservationPosition & positionObs)
 {
@@ -54,7 +54,7 @@ bool GPSLocalisationPlugin::processGGA(const Duration & stamp,
 }
 
 //-----------------------------------------------------------------------------
-bool GPSLocalisationPlugin::processRMC(const Duration & stamp,
+bool LocalisationGPSPlugin::processRMC(const Duration & stamp,
                                        const std::string & rmcSentence,
                                        const double & linearSpeed,
                                        ObservationCourse & courseObs)
@@ -72,7 +72,7 @@ bool GPSLocalisationPlugin::processRMC(const Duration & stamp,
 }
 
 //-----------------------------------------------------------------------------
-void GPSLocalisationPlugin::processGSV(const std::string & gsvSentence)
+void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 {
   if(gps_->updateSatellitesViews(gsvSentence))
   {
@@ -81,7 +81,7 @@ void GPSLocalisationPlugin::processGSV(const std::string & gsvSentence)
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport GPSLocalisationPlugin::makeDiagnosticReport()
+DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport()
 {
   DiagnosticReport report;
   report += gga_rate_diagnostic_.getReport();

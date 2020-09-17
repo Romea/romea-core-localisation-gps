@@ -1,4 +1,4 @@
-#include "romea_gps_localisation_plugin/CheckupGGAFix.hpp"
+#include "romea_localisation_gps/CheckupGGAFix.hpp"
 
 namespace
 {

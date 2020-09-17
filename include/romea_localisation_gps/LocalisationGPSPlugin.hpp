@@ -16,12 +16,12 @@
 namespace romea {
 
 
-class GPSLocalisationPlugin
+class LocalisationGPSPlugin
 {
 
 public :
 
-  GPSLocalisationPlugin(std::unique_ptr<GPSReceiver> gps,
+  LocalisationGPSPlugin(std::unique_ptr<GPSReceiver> gps,
                         const FixQuality & minimalFixQuality,
                         const double & minimalSpeedOverGround);
 

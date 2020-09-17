@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(romea_gps_localisation_plugin2)
+project(romea_localisation_gps)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++17")
 
@@ -31,12 +31,12 @@ include_directories(
 #    SYSTEM ${EIGEN3_INCLUDE_DIRS},
     SYSTEM ${romea_filtering_INCLUDE_DIRS})
 
-add_library(romea_gps_localisation_plugin2
+add_library(romea_localisation_gps
     src/CheckupGGAFix.cpp
     src/CheckupRMCTrackAngle.cpp
-    src/gps_localisation_plugin.cpp)
+    src/LocalisationGPSPlugin.cpp)
 
-target_link_libraries(romea_gps_localisation_plugin2 ${catkin_LIBRARIES})
+target_link_libraries(romea_localisation_gps ${catkin_LIBRARIES})
 
 if(CATKIN_ENABLE_TESTING)
   add_subdirectory(test)
