@@ -6,3 +6,5 @@ target_link_libraries(${PROJECT_NAME}_test_gga_diagnostic ${PROJECT_NAME})
 catkin_add_gtest(${PROJECT_NAME}_test_rmc_diagnostic test_rmc_diagnostic.cpp )
 target_link_libraries(${PROJECT_NAME}_test_rmc_diagnostic ${PROJECT_NAME})
 
+catkin_add_gtest(${PROJECT_NAME}_test_gps_plugin test_gps_plugin.cpp )
+target_link_libraries(${PROJECT_NAME}_test_gps_plugin ${PROJECT_NAME})

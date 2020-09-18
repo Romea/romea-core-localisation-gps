@@ -2,17 +2,18 @@
 #include <gtest/gtest.h>
 
 //romea
+#include "helper.hpp"
 #include "romea_localisation_gps/CheckupRMCTrackAngle.hpp"
 
-romea::RMCFrame minimalGoodRMCFrame()
-{
-  romea::RMCFrame frame;
-  frame.talkerId=romea::TalkerId::GP;
-  frame.speedOverGroundInMeterPerSecond=3.2;
-  frame.trackAngleTrue=1.54;
-  frame.magneticDeviation=0.0378;
-  return frame;
-}
+//romea::RMCFrame minimalGoodRMCFrame()
+//{
+//  romea::RMCFrame frame;
+//  frame.talkerId=romea::TalkerId::GP;
+//  frame.speedOverGroundInMeterPerSecond=3.2;
+//  frame.trackAngleTrue=1.54;
+//  frame.magneticDeviation=0.0378;
+//  return frame;
+//}
 
 class TestRMCTrackAngleDiagnostic : public ::testing::Test
 {
