@@ -45,11 +45,11 @@ protected:
   std::unique_ptr<GPSReceiver> gps_;
   ENUConverter enuConverter_;
 
-  CheckupRate gga_rate_diagnostic_;
-  CheckupRate rmc_rate_diagnostic_;
+  CheckupRate ggaRateDiagnostic_;
+  CheckupRate rmcRateDiagnostic_;
 
-  CheckupGGAFix gga_fix_diagnostic_;
-  CheckupRMCTrackAngle rmc_track_angle_diagnostic_;
+  CheckupGGAFix ggaFixDiagnostic_;
+  CheckupRMCTrackAngle rmcTrackAngleDiagnostic_;
 };
 
 }

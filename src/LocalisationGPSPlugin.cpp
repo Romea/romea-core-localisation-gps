@@ -14,10 +14,10 @@ LocalisationGPSPlugin::LocalisationGPSPlugin(std::unique_ptr<GPSReceiver> gps,
                                              const double & minimalSpeedOverGround):
   gps_(std::move(gps)),
   enuConverter_(),
-  gga_rate_diagnostic_("gga",1.0,0.1),
-  rmc_rate_diagnostic_("rmc",1.0,0.1),
-  gga_fix_diagnostic_(minimalFixQuality),
-  rmc_track_angle_diagnostic_(minimalSpeedOverGround)
+  ggaRateDiagnostic_("gga",1.0,0.1),
+  rmcRateDiagnostic_("rmc",1.0,0.1),
+  ggaFixDiagnostic_(minimalFixQuality),
+  rmcTrackAngleDiagnostic_(minimalSpeedOverGround)
 {
 }
 
@@ -33,8 +33,8 @@ bool LocalisationGPSPlugin::processGGA(const Duration & stamp,
                                        ObservationPosition & positionObs)
 {
   GGAFrame ggaFrame(ggaSentence);
-  if(gga_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-     gga_fix_diagnostic_.evaluate(ggaFrame) == DiagnosticStatus::OK)
+  if(ggaRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
+     ggaFixDiagnostic_.evaluate(ggaFrame) == DiagnosticStatus::OK)
   {
 
     GeodeticCoordinates geodeticCoordinates((*ggaFrame.latitude).toDouble(),
@@ -60,8 +60,8 @@ bool LocalisationGPSPlugin::processRMC(const Duration & stamp,
                                        ObservationCourse & courseObs)
 {
   RMCFrame rmcFrame(rmcSentence);
-  if(rmc_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-     rmc_track_angle_diagnostic_.evaluate(rmcFrame) == DiagnosticStatus::OK)
+  if(rmcRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
+     rmcTrackAngleDiagnostic_.evaluate(rmcFrame) == DiagnosticStatus::OK)
   {
     courseObs.Y() = trackAngleToCourseAngle(*rmcFrame.trackAngleTrue,linearSpeed);
     courseObs.R() = DEFAULT_COURSE_ANGLE_STD *DEFAULT_COURSE_ANGLE_STD;
@@ -84,10 +84,10 @@ void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport()
 {
   DiagnosticReport report;
-  report += gga_rate_diagnostic_.getReport();
-  report += rmc_rate_diagnostic_.getReport();
-  report += gga_fix_diagnostic_.getReport();
-  report += rmc_track_angle_diagnostic_.getReport();
+  report += ggaRateDiagnostic_.getReport();
+  report += rmcRateDiagnostic_.getReport();
+  report += ggaFixDiagnostic_.getReport();
+  report += rmcTrackAngleDiagnostic_.getReport();
   return report;
 }
 
