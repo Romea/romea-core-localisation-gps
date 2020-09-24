@@ -38,6 +38,8 @@ public :
 
   void processGSV(const std::string & gsvSentence);
 
+  const ENUConverter & getENUConverter()const;
+
   DiagnosticReport makeDiagnosticReport();
 
 protected:

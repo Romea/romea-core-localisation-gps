@@ -28,6 +28,12 @@ void LocalisationGPSPlugin::setAnchor(const GeodeticCoordinates & wgs84_anchor)
 }
 
 //-----------------------------------------------------------------------------
+const ENUConverter & LocalisationGPSPlugin::getENUConverter()const
+{
+  return enuConverter_;
+}
+
+//-----------------------------------------------------------------------------
 bool LocalisationGPSPlugin::processGGA(const Duration & stamp,
                                        const std::string & ggaSentence,
                                        ObservationPosition & positionObs)
