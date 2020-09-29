@@ -87,7 +87,7 @@ void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport()
+DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport() const
 {
   DiagnosticReport report;
   report += ggaRateDiagnostic_.getReport();

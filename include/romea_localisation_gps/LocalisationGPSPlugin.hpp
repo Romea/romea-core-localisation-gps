@@ -40,7 +40,7 @@ public :
 
   const ENUConverter & getENUConverter()const;
 
-  DiagnosticReport makeDiagnosticReport();
+  DiagnosticReport makeDiagnosticReport()const;
 
 protected:
 
