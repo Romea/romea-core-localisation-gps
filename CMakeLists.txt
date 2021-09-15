@@ -9,7 +9,7 @@ project(
 
 find_package(romea_common REQUIRED)
 find_package(romea_gps REQUIRED)
-find_package(romea_localisation)
+find_package(romea_localisation REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/CheckupGGAFix.cpp
