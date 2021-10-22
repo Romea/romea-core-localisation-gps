@@ -28,7 +28,11 @@ void CheckupRMCTrackAngle::checkFixIsReliable_(const RMCFrame & rmcFrame)
 {
   if(*rmcFrame.speedOverGroundInMeterPerSecond<minimalSpeedOverGround_)
   {
-    setDiagnostic_(DiagnosticStatus::WARN,"RMC track angle not reliable.");
+    std::stringstream msg;
+    msg << "RMC track angle not reliable ";
+    msg << "because vehicle speed is lower than ";
+    msg << minimalSpeedOverGround_ <<" m/s.";
+    setDiagnostic_(DiagnosticStatus::WARN,msg.str());
   }
   else
   {
