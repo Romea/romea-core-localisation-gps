@@ -68,12 +68,12 @@ TEST_F(TestRMCTrackAngleDiagnostic, checkMissingTrackAngle)
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestRMCTrackAngleDiagnostic, unreliableNumberOfSatellites)
+TEST_F(TestRMCTrackAngleDiagnostic, checkUnreliableTrackAngle)
 {
   frame.speedOverGroundInMeterPerSecond=0.5;
   EXPECT_EQ(diagnostic.evaluate(frame),romea::DiagnosticStatus::WARN);
   EXPECT_EQ(diagnostic.getReport().diagnostics.front().status,romea::DiagnosticStatus::WARN);
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(),"RMC track angle not reliable.");
+  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(),"RMC track angle is not reliable because vehicle speed is lower than 1 m/s. ");
 
 }
 
