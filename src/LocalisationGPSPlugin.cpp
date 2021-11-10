@@ -43,9 +43,10 @@ bool LocalisationGPSPlugin::processGGA(const Duration & stamp,
      ggaFixDiagnostic_.evaluate(ggaFrame) == DiagnosticStatus::OK)
   {
 
-    GeodeticCoordinates geodeticCoordinates((*ggaFrame.latitude).toDouble(),
-                                            (*ggaFrame.longitude).toDouble(),
-                                            *ggaFrame.altitudeAboveGeoid+*ggaFrame.geoidHeight);
+    auto geodeticCoordinates = makeGeodeticCoordinates((*ggaFrame.latitude).toDouble(),
+                                                       (*ggaFrame.longitude).toDouble(),
+                                                       (*ggaFrame.altitudeAboveGeoid+
+                                                        *ggaFrame.geoidHeight));
 
     Eigen::Vector3d position = enuConverter_.toENU(geodeticCoordinates);
     double fixStd = *ggaFrame.horizontalDilutionOfPrecision*gps_->getUERE(*ggaFrame.fixQuality);
@@ -82,7 +83,7 @@ void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 {
   if(gps_->updateSatellitesViews(gsvSentence))
   {
-//    diagnostics_.updateConstellationReliability(gps_->getReliability());
+    //    diagnostics_.updateConstellationReliability(gps_->getReliability());
   }
 }
 
@@ -96,20 +97,6 @@ DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport() const
   report += rmcTrackAngleDiagnostic_.getReport();
   return report;
 }
-
-//  switch (NMEAParsing::extractSentenceId(msg->sentence))
-//  {
-//  case NMEAParsing::SentenceID::GGA :
-//    processGGA_(msg);
-//    break;
-//  case NMEAParsing::SentenceID::RMC :
-//    processRMC_(msg);
-//    break;
-//  case NMEAParsing::SentenceID::GSV :
-//    processGSV_(msg);
-//    break;
-//  default :
-//    break;
 
 }
 
