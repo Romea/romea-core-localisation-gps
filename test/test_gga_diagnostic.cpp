@@ -37,6 +37,20 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+TEST_F(TestGGAFixDiagnostic, checkStaleAfterInstantiation)
+{
+  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status,romea::DiagnosticStatus::STALE);
+}
+
+//-----------------------------------------------------------------------------
+TEST_F(TestGGAFixDiagnostic, checkStaleAfterReset)
+{
+  diagnostic.evaluate(frame);
+  diagnostic.reset();
+  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status,romea::DiagnosticStatus::STALE);
+}
+
+//-----------------------------------------------------------------------------
 TEST_F(TestGGAFixDiagnostic, checkMinimalGoodFrame)
 {
   EXPECT_EQ(diagnostic.evaluate(frame),romea::DiagnosticStatus::OK);

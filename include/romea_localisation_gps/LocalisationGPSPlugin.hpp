@@ -27,28 +27,40 @@ public :
 
   void setAnchor(const GeodeticCoordinates & wgs84_anchor);
 
+  void processLinearSpeed(const Duration & stamp,
+                          const double & linearSpeed);
+
   bool processGGA(const Duration & stamp,
                   const std::string & ggaSentence,
                   ObservationPosition & positionObs);
 
   bool processRMC(const Duration & stamp,
                   const std::string & rmcSentence,
-                  const double & linearSpeed,
                   ObservationCourse & courseObs);
 
   void processGSV(const std::string & gsvSentence);
 
   const ENUConverter & getENUConverter()const;
 
-  DiagnosticReport makeDiagnosticReport()const;
+  DiagnosticReport makeDiagnosticReport(const Duration & stamp);
 
-protected:
+private :
+
+  DiagnosticReport makeGGADiagnosticsReport_(const Duration & stamp);
+
+  DiagnosticReport makeRMCDiagnosticsReport_(const Duration & stamp);
+
+  DiagnosticReport makeLinearSpeedDiagnosticReport_(const Duration & stamp);
+
+private:
 
   std::unique_ptr<GPSReceiver> gps_;
   ENUConverter enuConverter_;
+  std::atomic<double> linearSpeed_;
 
   CheckupRate ggaRateDiagnostic_;
   CheckupRate rmcRateDiagnostic_;
+  CheckupRate linearSpeedRateDiagnostic_;
 
   CheckupGGAFix ggaFixDiagnostic_;
   CheckupRMCTrackAngle rmcTrackAngleDiagnostic_;

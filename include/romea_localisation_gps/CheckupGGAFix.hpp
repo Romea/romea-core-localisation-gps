@@ -21,6 +21,8 @@ public:
 
   const DiagnosticReport & getReport()const;
 
+  void reset();
+
 private :
 
   void setReportInfos_(const GGAFrame & ggaFrame);

@@ -18,6 +18,8 @@ public:
 
   const DiagnosticReport & getReport()const;
 
+  void reset();
+
 private :
 
   bool checkFrameIsComplete_(const RMCFrame & rmcFrame);

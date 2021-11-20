@@ -12,6 +12,13 @@ CheckupRMCTrackAngle::CheckupRMCTrackAngle(const double & minimalSpeedOverGround
 }
 
 //-----------------------------------------------------------------------------
+void CheckupRMCTrackAngle::reset()
+{
+  report_.diagnostics.clear();
+  report_.diagnostics.push_back(Diagnostic());
+}
+
+//-----------------------------------------------------------------------------
 DiagnosticStatus CheckupRMCTrackAngle::evaluate(const RMCFrame & rmcFrame)
 {
 

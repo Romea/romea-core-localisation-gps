@@ -1,4 +1,5 @@
 #include "romea_localisation_gps/LocalisationGPSPlugin.hpp"
+#include <iostream>
 
 namespace
 {
@@ -14,8 +15,10 @@ LocalisationGPSPlugin::LocalisationGPSPlugin(std::unique_ptr<GPSReceiver> gps,
                                              const double & minimalSpeedOverGround):
   gps_(std::move(gps)),
   enuConverter_(),
+  linearSpeed_(std::numeric_limits<double>::quiet_NaN()),
   ggaRateDiagnostic_("gga",1.0,0.1),
   rmcRateDiagnostic_("rmc",1.0,0.1),
+  linearSpeedRateDiagnostic_("linear_speed",10.0,0.1),
   ggaFixDiagnostic_(minimalFixQuality),
   rmcTrackAngleDiagnostic_(minimalSpeedOverGround)
 {
@@ -31,6 +34,14 @@ void LocalisationGPSPlugin::setAnchor(const GeodeticCoordinates & wgs84_anchor)
 const ENUConverter & LocalisationGPSPlugin::getENUConverter()const
 {
   return enuConverter_;
+}
+
+//-----------------------------------------------------------------------------
+void LocalisationGPSPlugin::processLinearSpeed(const Duration & stamp,
+                                               const double & linearSpeed)
+{
+  linearSpeed_.store(linearSpeed);
+  linearSpeedRateDiagnostic_.evaluate(stamp);
 }
 
 //-----------------------------------------------------------------------------
@@ -63,14 +74,15 @@ bool LocalisationGPSPlugin::processGGA(const Duration & stamp,
 //-----------------------------------------------------------------------------
 bool LocalisationGPSPlugin::processRMC(const Duration & stamp,
                                        const std::string & rmcSentence,
-                                       const double & linearSpeed,
                                        ObservationCourse & courseObs)
 {
+
   RMCFrame rmcFrame(rmcSentence);
   if(rmcRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-     rmcTrackAngleDiagnostic_.evaluate(rmcFrame) == DiagnosticStatus::OK)
+     rmcTrackAngleDiagnostic_.evaluate(rmcFrame) == DiagnosticStatus::OK &&
+     std::isfinite(linearSpeed_))
   {
-    courseObs.Y() = trackAngleToCourseAngle(*rmcFrame.trackAngleTrue,linearSpeed);
+    courseObs.Y() = trackAngleToCourseAngle(*rmcFrame.trackAngleTrue,linearSpeed_);
     courseObs.R() = DEFAULT_COURSE_ANGLE_STD *DEFAULT_COURSE_ANGLE_STD;
     return true;
   }
@@ -88,13 +100,48 @@ void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport() const
+DiagnosticReport LocalisationGPSPlugin::makeGGADiagnosticsReport_(const Duration & stamp)
 {
   DiagnosticReport report;
+  if(!ggaRateDiagnostic_.heartBeatCallback(stamp))
+  {
+    ggaFixDiagnostic_.reset();
+  }
   report += ggaRateDiagnostic_.getReport();
-  report += rmcRateDiagnostic_.getReport();
   report += ggaFixDiagnostic_.getReport();
+  return report;
+}
+
+//-----------------------------------------------------------------------------
+DiagnosticReport LocalisationGPSPlugin::makeRMCDiagnosticsReport_(const Duration & stamp)
+{
+  DiagnosticReport report;
+  if(!rmcRateDiagnostic_.heartBeatCallback(stamp))
+  {
+    rmcTrackAngleDiagnostic_.reset();
+  }
+  report += rmcRateDiagnostic_.getReport();
   report += rmcTrackAngleDiagnostic_.getReport();
+  return report;
+}
+
+//-----------------------------------------------------------------------------
+DiagnosticReport LocalisationGPSPlugin::makeLinearSpeedDiagnosticReport_(const Duration & stamp)
+{
+  if(!linearSpeedRateDiagnostic_.heartBeatCallback(stamp))
+  {
+    linearSpeed_=std::numeric_limits<double>::quiet_NaN();
+  }
+  return linearSpeedRateDiagnostic_.getReport();
+}
+
+//-----------------------------------------------------------------------------
+DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport(const Duration & stamp)
+{
+  DiagnosticReport report;
+  report += makeLinearSpeedDiagnosticReport_(stamp);
+  report += makeGGADiagnosticsReport_(stamp);
+  report += makeRMCDiagnosticsReport_(stamp);
   return report;
 }
 

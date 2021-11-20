@@ -13,6 +13,14 @@ CheckupGGAFix::CheckupGGAFix(const FixQuality & minimalFixQuality):
   report_(),
   minimalFixQuality_(minimalFixQuality)
 {
+  report_.diagnostics.push_back(Diagnostic());
+}
+
+//-----------------------------------------------------------------------------
+void CheckupGGAFix::reset()
+{
+  report_.diagnostics.clear();
+  report_.diagnostics.push_back(Diagnostic());
 }
 
 //-----------------------------------------------------------------------------

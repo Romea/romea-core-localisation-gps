@@ -31,6 +31,20 @@ public:
 
 
 //-----------------------------------------------------------------------------
+TEST_F(TestRMCTrackAngleDiagnostic, checkStaleAfterInstantiation)
+{
+  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status,romea::DiagnosticStatus::STALE);
+}
+
+//-----------------------------------------------------------------------------
+TEST_F(TestRMCTrackAngleDiagnostic, checkStaleAfterReset)
+{
+  diagnostic.evaluate(frame);
+  diagnostic.reset();
+  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status,romea::DiagnosticStatus::STALE);
+}
+
+//-----------------------------------------------------------------------------
 TEST_F(TestRMCTrackAngleDiagnostic, checkMinimalGoodFrame)
 {
   EXPECT_EQ(diagnostic.evaluate(frame),romea::DiagnosticStatus::OK);
