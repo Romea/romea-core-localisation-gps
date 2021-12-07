@@ -3,7 +3,7 @@
 
 //romea
 #include "helper.hpp"
-#include "romea_localisation_gps/CheckupGGAFix.hpp"
+#include "romea_core_localisation_gps/CheckupGGAFix.hpp"
 
 //romea::GGAFrame minimalGoodGGAFrame()
 //{

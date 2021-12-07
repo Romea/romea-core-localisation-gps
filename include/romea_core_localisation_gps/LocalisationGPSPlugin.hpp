@@ -5,11 +5,11 @@
 #include <memory>
 
 //romea
-#include <romea_gps/GPSReceiver.hpp>
-#include <romea_common/geodesy/ENUConverter.hpp>
-#include <romea_common/diagnostic/CheckupRate.hpp>
-#include <romea_localisation/ObservationPosition.hpp>
-#include <romea_localisation/ObservationCourse.hpp>
+#include <romea_core_gps/GPSReceiver.hpp>
+#include <romea_core_common/geodesy/ENUConverter.hpp>
+#include <romea_core_common/diagnostic/CheckupRate.hpp>
+#include <romea_core_localisation/ObservationPosition.hpp>
+#include <romea_core_localisation/ObservationCourse.hpp>
 #include "CheckupRMCTrackAngle.hpp"
 #include "CheckupGGAFix.hpp"
 

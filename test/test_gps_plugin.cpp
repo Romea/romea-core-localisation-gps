@@ -3,7 +3,7 @@
 
 //romea
 #include "helper.hpp"
-#include "romea_localisation_gps/LocalisationGPSPlugin.hpp"
+#include "romea_core_localisation_gps/LocalisationGPSPlugin.hpp"
 
 bool boolean(const romea::DiagnosticStatus & status)
 {

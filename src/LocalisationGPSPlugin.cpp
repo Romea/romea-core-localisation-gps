@@ -1,4 +1,4 @@
-#include "romea_localisation_gps/LocalisationGPSPlugin.hpp"
+#include "romea_core_localisation_gps/LocalisationGPSPlugin.hpp"
 #include <iostream>
 
 namespace

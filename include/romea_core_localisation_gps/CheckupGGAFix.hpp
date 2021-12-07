@@ -5,8 +5,8 @@
 #include <list>
 
 //romea
-#include <romea_common/diagnostic/DiagnosticReport.hpp>
-#include <romea_gps/nmea/GGAFrame.hpp>
+#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
+#include <romea_core_gps/nmea/GGAFrame.hpp>
 
 namespace romea {
 

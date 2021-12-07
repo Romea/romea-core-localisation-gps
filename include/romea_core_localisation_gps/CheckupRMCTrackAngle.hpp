@@ -2,8 +2,8 @@
 #define _romea_CheckRMCTrackAngle_hpp_
 
 //romea
-#include <romea_common/diagnostic/DiagnosticReport.hpp>
-#include <romea_gps/nmea/RMCFrame.hpp>
+#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
+#include <romea_core_gps/nmea/RMCFrame.hpp>
 
 namespace romea {
 

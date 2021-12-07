@@ -25,8 +25,8 @@ melodic_catkin_tests:
   stage: build
   script:
    - (cd /usr/src/gtest; cmake . && make && cp *.a /usr/lib/)
-   - catkin build romea_localisation_gps --cmake-args -DBUILD_TESTS=ON
-   - cd build/romea_localisation_gps
+   - catkin build romea_core_localisation_gps --cmake-args -DBUILD_TESTS=ON
+   - cd build/romea_core_localisation_gps
    - GTEST_COLOR=1 ctest --output-on-failure
 
 # noetic
@@ -35,6 +35,6 @@ noetic_catkin_build:
   stage: test
   before_script:
   script:
-   - catkin build romea_localisation_gps --cmake-args -DBUILD_TESTS=ON
-   - cd build/romea_localisation_gps
+   - catkin build romea_core_localisation_gps --cmake-args -DBUILD_TESTS=ON
+   - cd build/romea_core_localisation_gps
    - GTEST_COLOR=1 ctest --output-on-failure

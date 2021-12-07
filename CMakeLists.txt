@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
 
 project(
-  "romea_localisation_gps"
+  "romea_core_localisation_gps"
   VERSION 0.1.0
   #  DESCRIPTION
   #  HOMEPAGE_URL
   LANGUAGES CXX)
 
-find_package(romea_common REQUIRED)
-find_package(romea_gps REQUIRED)
-find_package(romea_localisation REQUIRED)
+find_package(romea_core_common REQUIRED)
+find_package(romea_core_gps REQUIRED)
+find_package(romea_core_localisation REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/CheckupGGAFix.cpp
@@ -22,16 +22,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
-  ${romea_gps_INCLUDE_DIRS}
-  ${romea_localisation_INCLUDE_DIRS}
+  ${romea_core_gps_INCLUDE_DIRS}
+  ${romea_core_localisation_INCLUDE_DIRS}
   )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
   -Wall -Wextra -O3 -std=c++17)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-  romea_gps::romea_gps
-  romea_localisation::romea_localisation)
+  romea_core_gps::romea_core_gps
+  romea_core_localisation::romea_core_localisation)
 
 include(GNUInstallDirs)
 
