@@ -5,23 +5,6 @@
 #include "helper.hpp"
 #include "romea_core_localisation_gps/CheckupGGAFix.hpp"
 
-//romea::GGAFrame minimalGoodGGAFrame()
-//{
-//  romea::GGAFrame frame;
-//  frame.talkerId=romea::TalkerId::GN;
-//  frame.longitude=romea::Longitude(0.03);
-//  frame.latitude=romea::Latitude(0.7854);
-//  frame.geoidHeight=400.8;
-//  frame.altitudeAboveGeoid=53.3;
-//  frame.horizontalDilutionOfPrecision=1.2;
-//  frame.numberSatellitesUsedToComputeFix=12;
-//  frame.fixQuality = romea::FixQuality::RTK_FIX;
-//  frame.horizontalDilutionOfPrecision=1.2;
-//  frame.dgpsCorrectionAgeInSecond=2.5;
-//  frame.dgpsStationIdNumber=1;
-//  return frame;
-//}
-
 class TestGGAFixDiagnostic : public ::testing::Test
 {
 public:
@@ -37,17 +20,37 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-TEST_F(TestGGAFixDiagnostic, checkStaleAfterInstantiation)
+TEST_F(TestGGAFixDiagnostic, checkEmptyReport)
 {
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status,romea::DiagnosticStatus::STALE);
+  EXPECT_TRUE(diagnostic.getReport().diagnostics.empty());
+  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("longitude").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("latitude").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("geoid_height").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("altitude_above_geoid").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("hdop").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("number_of_satellites").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("correction_age").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("base_station_id").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("fix_quality").c_str(),"");
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestGGAFixDiagnostic, checkStaleAfterReset)
+TEST_F(TestGGAFixDiagnostic, checkEmptyReportAfterReset)
 {
   diagnostic.evaluate(frame);
   diagnostic.reset();
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status,romea::DiagnosticStatus::STALE);
+  EXPECT_TRUE(diagnostic.getReport().diagnostics.empty());
+  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("longitude").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("latitude").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("geoid_height").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("altitude_above_geoid").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("hdop").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("number_of_satellites").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("correction_age").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("base_station_id").c_str(),"");
+  EXPECT_STREQ(diagnostic.getReport().info.at("fix_quality").c_str(),"");
 }
 
 //-----------------------------------------------------------------------------

@@ -100,49 +100,41 @@ void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport LocalisationGPSPlugin::makeGGADiagnosticsReport_(const Duration & stamp)
+void LocalisationGPSPlugin::checkHearBeats_(const Duration & stamp)
 {
-  DiagnosticReport report;
+  if(!linearSpeedRateDiagnostic_.heartBeatCallback(stamp))
+  {
+    linearSpeed_=std::numeric_limits<double>::quiet_NaN();
+  }
+
   if(!ggaRateDiagnostic_.heartBeatCallback(stamp))
   {
     ggaFixDiagnostic_.reset();
   }
-  report += ggaRateDiagnostic_.getReport();
-  report += ggaFixDiagnostic_.getReport();
-  return report;
-}
 
-//-----------------------------------------------------------------------------
-DiagnosticReport LocalisationGPSPlugin::makeRMCDiagnosticsReport_(const Duration & stamp)
-{
-  DiagnosticReport report;
   if(!rmcRateDiagnostic_.heartBeatCallback(stamp))
   {
     rmcTrackAngleDiagnostic_.reset();
   }
+}
+
+//-----------------------------------------------------------------------------
+DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport_()
+{
+  DiagnosticReport report;
+  report += linearSpeedRateDiagnostic_.getReport();
+  report += ggaRateDiagnostic_.getReport();
+  report += ggaFixDiagnostic_.getReport();
   report += rmcRateDiagnostic_.getReport();
   report += rmcTrackAngleDiagnostic_.getReport();
   return report;
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport LocalisationGPSPlugin::makeLinearSpeedDiagnosticReport_(const Duration & stamp)
-{
-  if(!linearSpeedRateDiagnostic_.heartBeatCallback(stamp))
-  {
-    linearSpeed_=std::numeric_limits<double>::quiet_NaN();
-  }
-  return linearSpeedRateDiagnostic_.getReport();
-}
-
-//-----------------------------------------------------------------------------
 DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport(const Duration & stamp)
 {
-  DiagnosticReport report;
-  report += makeLinearSpeedDiagnosticReport_(stamp);
-  report += makeGGADiagnosticsReport_(stamp);
-  report += makeRMCDiagnosticsReport_(stamp);
-  return report;
+  checkHearBeats_(stamp);
+  return makeDiagnosticReport_();
 }
 
 }

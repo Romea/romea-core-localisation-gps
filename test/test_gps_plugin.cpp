@@ -66,11 +66,10 @@ public:
       EXPECT_FALSE(gps_plugin->processRMC(stamp,rmc_sentence,course));
       report = gps_plugin->makeDiagnosticReport(stamp);
 
+      EXPECT_EQ(report.diagnostics.size(),3);
+      EXPECT_EQ(diagnostic(0).status,std::isfinite(linear_speed) ? romea::DiagnosticStatus::OK : romea::DiagnosticStatus::ERROR);
       EXPECT_EQ(diagnostic(1).status,romea::DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(2).status,romea::DiagnosticStatus::STALE);
-      EXPECT_EQ(diagnostic(3).status,romea::DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(4).status,romea::DiagnosticStatus::STALE);
-
+      EXPECT_EQ(diagnostic(2).status,romea::DiagnosticStatus::ERROR);
     }
 
     romea::Duration stamp = romea::durationFromSecond(0.5);

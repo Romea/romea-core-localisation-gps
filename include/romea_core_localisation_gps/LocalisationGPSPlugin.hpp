@@ -46,11 +46,8 @@ public :
 
 private :
 
-  DiagnosticReport makeGGADiagnosticsReport_(const Duration & stamp);
-
-  DiagnosticReport makeRMCDiagnosticsReport_(const Duration & stamp);
-
-  DiagnosticReport makeLinearSpeedDiagnosticReport_(const Duration & stamp);
+  void checkHearBeats_(const Duration & stamp);
+  DiagnosticReport makeDiagnosticReport_();
 
 private:
 

@@ -10,22 +10,16 @@ namespace romea {
 
 //-----------------------------------------------------------------------------
 CheckupGGAFix::CheckupGGAFix(const FixQuality & minimalFixQuality):
-  report_(),
-  minimalFixQuality_(minimalFixQuality)
+  minimalFixQuality_(minimalFixQuality),
+  report_()
 {
-  report_.diagnostics.push_back(Diagnostic());
-}
-
-//-----------------------------------------------------------------------------
-void CheckupGGAFix::reset()
-{
-  report_.diagnostics.clear();
-  report_.diagnostics.push_back(Diagnostic());
+  declareReportInfos_();
 }
 
 //-----------------------------------------------------------------------------
 DiagnosticStatus CheckupGGAFix::evaluate(const GGAFrame & ggaFrame)
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
   if(checkFrameIsComplete_(ggaFrame))
   {
@@ -147,9 +141,34 @@ bool CheckupGGAFix::checkFixQuality_(const GGAFrame & ggaFrame)
 }
 
 //-----------------------------------------------------------------------------
+void CheckupGGAFix::declareReportInfos_()
+{
+  setReportInfo(report_,"talker","");
+  setReportInfo(report_,"geoid_height","");
+  setReportInfo(report_,"altitude_above_geoid","");
+  setReportInfo(report_,"fix_quality","");
+  setReportInfo(report_,"number_of_satellites","");
+  setReportInfo(report_,"hdop","");
+  setReportInfo(report_,"correction_age","");
+  setReportInfo(report_,"base_station_id","");
+  setReportInfo(report_,"latitude","");
+  setReportInfo(report_,"longitude","");
+
+}
+
+//-----------------------------------------------------------------------------
 const DiagnosticReport & CheckupGGAFix::getReport()const
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   return report_;
+}
+
+//-----------------------------------------------------------------------------
+void CheckupGGAFix::reset()
+{
+  std::lock_guard<std::mutex> lock(mutex_);
+  report_.diagnostics.clear();
+  declareReportInfos_();
 }
 
 //-----------------------------------------------------------------------------
@@ -159,6 +178,7 @@ void CheckupGGAFix::addDiagnostic_(const DiagnosticStatus & status, const std::s
   report_.diagnostics.back().status=status;
   report_.diagnostics.back().message=message;
 }
+
 
 }// namespace
 

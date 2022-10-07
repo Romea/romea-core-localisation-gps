@@ -5,23 +5,18 @@ namespace romea {
 
 //-----------------------------------------------------------------------------
 CheckupRMCTrackAngle::CheckupRMCTrackAngle(const double & minimalSpeedOverGround):
-  report_(),
-  minimalSpeedOverGround_(minimalSpeedOverGround)
+  minimalSpeedOverGround_(minimalSpeedOverGround),
+  mutex_(),
+  report_()
 {
-  report_.diagnostics.push_back(Diagnostic());
+  declareReportInfos_();
 }
 
-//-----------------------------------------------------------------------------
-void CheckupRMCTrackAngle::reset()
-{
-  report_.diagnostics.clear();
-  report_.diagnostics.push_back(Diagnostic());
-}
 
 //-----------------------------------------------------------------------------
 DiagnosticStatus CheckupRMCTrackAngle::evaluate(const RMCFrame & rmcFrame)
 {
-
+  std::lock_guard<std::mutex> lock(mutex_);
   if(checkFrameIsComplete_(rmcFrame))
   {
     checkFixIsReliable_(rmcFrame);
@@ -50,6 +45,7 @@ void CheckupRMCTrackAngle::checkFixIsReliable_(const RMCFrame & rmcFrame)
 //-----------------------------------------------------------------------------
 const DiagnosticReport & CheckupRMCTrackAngle::getReport() const
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   return report_;
 }
 
@@ -80,9 +76,25 @@ void CheckupRMCTrackAngle::setReportInfos_(const RMCFrame & rmcFrame)
 //-----------------------------------------------------------------------------
 void CheckupRMCTrackAngle::setDiagnostic_(const DiagnosticStatus & status, const std::string & message)
 {
-  Diagnostic & diagnostic = report_.diagnostics.front();
-  diagnostic.message = message;
-  diagnostic.status = status;
+  report_.diagnostics.clear();
+  report_.diagnostics.push_back({status,message});
+}
+
+//-----------------------------------------------------------------------------
+void CheckupRMCTrackAngle::declareReportInfos_()
+{
+  setReportInfo(report_,"talker","");
+  setReportInfo(report_,"speed_over_ground","");
+  setReportInfo(report_,"track_angle","");
+  setReportInfo(report_,"magnetic_deviation","");
+}
+
+//-----------------------------------------------------------------------------
+void CheckupRMCTrackAngle::reset()
+{
+  std::lock_guard<std::mutex> lock(mutex_);
+  report_.diagnostics.clear();
+  declareReportInfos_();
 }
 
 }// namespace

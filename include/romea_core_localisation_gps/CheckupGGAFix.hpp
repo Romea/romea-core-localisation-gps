@@ -1,8 +1,9 @@
-#ifndef _romea_DiagnosticsGGAFix2_hpp_
-#define _romea_DiagnosticsGGAFix2_hpp_
+#ifndef _romea_DiagnosticsGGAFix_hpp_
+#define _romea_DiagnosticsGGAFix_hpp_
 
 //std
 #include <list>
+#include <mutex>
 
 //romea
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
@@ -25,6 +26,7 @@ public:
 
 private :
 
+  void declareReportInfos_();
   void setReportInfos_(const GGAFrame & ggaFrame);
   void addDiagnostic_(const DiagnosticStatus & status, const std::string & message);
 
@@ -36,9 +38,12 @@ private :
 
 private :
 
-  DiagnosticReport report_;
   FixQuality minimalFixQuality_;
   double maximalHorizontalDilutionOfPrecision_;
+
+  mutable std::mutex mutex_;
+  DiagnosticReport report_;
+
 };
 
 
