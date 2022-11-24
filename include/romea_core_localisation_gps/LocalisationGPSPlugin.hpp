@@ -55,9 +55,9 @@ private:
   ENUConverter enuConverter_;
   std::atomic<double> linearSpeed_;
 
-  CheckupRate ggaRateDiagnostic_;
-  CheckupRate rmcRateDiagnostic_;
-  CheckupRate linearSpeedRateDiagnostic_;
+  CheckupGreaterThanRate ggaRateDiagnostic_;
+  CheckupGreaterThanRate rmcRateDiagnostic_;
+  CheckupGreaterThanRate linearSpeedRateDiagnostic_;
 
   CheckupGGAFix ggaFixDiagnostic_;
   CheckupRMCTrackAngle rmcTrackAngleDiagnostic_;
