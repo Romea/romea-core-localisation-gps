@@ -1,10 +1,11 @@
-#ifndef __GPSLocalisationPlugin2_HPP__
-#define __GPSLocalisationPlugin2_HPP__
+#ifndef ROMEA_CORE_LOCALISATION_GPS_LOCALISATIONGPSPLUGIN_HPP_
+#define ROMEA_CORE_LOCALISATION_GPS_LOCALISATIONGPSPLUGIN_HPP_
 
-//std
+// std
 #include <memory>
+#include <string>
 
-//romea
+// romea
 #include <romea_core_gps/GPSReceiver.hpp>
 #include <romea_core_common/geodesy/ENUConverter.hpp>
 #include <romea_core_common/diagnostic/CheckupRate.hpp>
@@ -18,7 +19,6 @@ namespace romea {
 
 class LocalisationGPSPlugin
 {
-
 public :
 
   LocalisationGPSPlugin(std::unique_ptr<GPSReceiver> gps,
@@ -50,7 +50,6 @@ private :
   DiagnosticReport makeDiagnosticReport_();
 
 private:
-
   std::unique_ptr<GPSReceiver> gps_;
   ENUConverter enuConverter_;
   std::atomic<double> linearSpeed_;
@@ -63,6 +62,6 @@ private:
   CheckupRMCTrackAngle rmcTrackAngleDiagnostic_;
 };
 
-}
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_GPS_LOCALISATIONGPSPLUGIN_HPP_

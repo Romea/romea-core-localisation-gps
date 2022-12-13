@@ -1,10 +1,11 @@
-#ifndef _romea_CheckRMCTrackAngle_hpp_
-#define _romea_CheckRMCTrackAngle_hpp_
+#ifndef ROMEA_CORE_LOCALISATION_GPS_CHECKUPRMCTRACKANGLE_HPP_
+#define ROMEA_CORE_LOCALISATION_GPS_CHECKUPRMCTRACKANGLE_HPP_
 
-//std
+// std
 #include <mutex>
+#include <string>
 
-//romea
+// romea
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 #include <romea_core_gps/nmea/RMCFrame.hpp>
 
@@ -12,10 +13,8 @@ namespace romea {
 
 class  CheckupRMCTrackAngle
 {
-
 public:
-
-  CheckupRMCTrackAngle(const double & minimalSpeedOverGround);
+  explicit CheckupRMCTrackAngle(const double & minimalSpeedOverGround);
 
   DiagnosticStatus evaluate(const RMCFrame & rmcFrame);
 
@@ -33,7 +32,6 @@ private :
   void setDiagnostic_(const DiagnosticStatus & status, const std::string & message);
 
 private:
-
   double minimalSpeedOverGround_;
 
   mutable std::mutex mutex_;
@@ -41,7 +39,7 @@ private:
 };
 
 
-}// namespace
+}  // namespace romea
 
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_GPS_CHECKUPRMCTRACKANGLE_HPP_

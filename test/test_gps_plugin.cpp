@@ -1,7 +1,7 @@
 // gtest
 #include <gtest/gtest.h>
 
-//romea
+// romea
 #include "helper.hpp"
 #include "romea_core_localisation_gps/LocalisationGPSPlugin.hpp"
 
@@ -13,7 +13,6 @@ bool boolean(const romea::DiagnosticStatus & status)
 class TestGPSPlugin : public ::testing::Test
 {
 public:
-
   TestGPSPlugin():
     stamp(),
     gga_frame(minimalGoodGGAFrame()),

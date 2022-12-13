@@ -16,9 +16,9 @@ LocalisationGPSPlugin::LocalisationGPSPlugin(std::unique_ptr<GPSReceiver> gps,
   gps_(std::move(gps)),
   enuConverter_(),
   linearSpeed_(std::numeric_limits<double>::quiet_NaN()),
-  ggaRateDiagnostic_("gga",1.0,0.1),
-  rmcRateDiagnostic_("rmc",1.0,0.1),
-  linearSpeedRateDiagnostic_("linear_speed",10.0,0.1),
+  ggaRateDiagnostic_("gga", 1.0, 0.1),
+  rmcRateDiagnostic_("rmc", 1.0, 0.1),
+  linearSpeedRateDiagnostic_("linear_speed", 10.0, 0.1),
   ggaFixDiagnostic_(minimalFixQuality),
   rmcTrackAngleDiagnostic_(minimalSpeedOverGround)
 {
@@ -50,10 +50,9 @@ bool LocalisationGPSPlugin::processGGA(const Duration & stamp,
                                        ObservationPosition & positionObs)
 {
   GGAFrame ggaFrame(ggaSentence);
-  if(ggaRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-     ggaFixDiagnostic_.evaluate(ggaFrame) == DiagnosticStatus::OK)
+  if (ggaRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
+      ggaFixDiagnostic_.evaluate(ggaFrame) == DiagnosticStatus::OK)
   {
-
     auto geodeticCoordinates = makeGeodeticCoordinates((*ggaFrame.latitude).toDouble(),
                                                        (*ggaFrame.longitude).toDouble(),
                                                        (*ggaFrame.altitudeAboveGeoid+
@@ -61,10 +60,10 @@ bool LocalisationGPSPlugin::processGGA(const Duration & stamp,
 
     Eigen::Vector3d position = enuConverter_.toENU(geodeticCoordinates);
     double fixStd = *ggaFrame.horizontalDilutionOfPrecision*gps_->getUERE(*ggaFrame.fixQuality);
-    positionObs.Y(ObservationPosition::POSITION_X)=position.x();
-    positionObs.Y(ObservationPosition::POSITION_Y)=position.y();
-    positionObs.R()=Eigen::Matrix2d::Identity()*fixStd*fixStd;
-    positionObs.levelArm=gps_->getAntennaBodyPosition();
+    positionObs.Y(ObservationPosition::POSITION_X) = position.x();
+    positionObs.Y(ObservationPosition::POSITION_Y) = position.y();
+    positionObs.R() = Eigen::Matrix2d::Identity()*fixStd*fixStd;
+    positionObs.levelArm = gps_->getAntennaBodyPosition();
     return true;
   }
 
@@ -76,13 +75,12 @@ bool LocalisationGPSPlugin::processRMC(const Duration & stamp,
                                        const std::string & rmcSentence,
                                        ObservationCourse & courseObs)
 {
-
   RMCFrame rmcFrame(rmcSentence);
-  if(rmcRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-     rmcTrackAngleDiagnostic_.evaluate(rmcFrame) == DiagnosticStatus::OK &&
-     std::isfinite(linearSpeed_))
+  if (rmcRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
+      rmcTrackAngleDiagnostic_.evaluate(rmcFrame) == DiagnosticStatus::OK &&
+      std::isfinite(linearSpeed_))
   {
-    courseObs.Y() = trackAngleToCourseAngle(*rmcFrame.trackAngleTrue,linearSpeed_);
+    courseObs.Y() = trackAngleToCourseAngle(*rmcFrame.trackAngleTrue, linearSpeed_);
     courseObs.R() = DEFAULT_COURSE_ANGLE_STD *DEFAULT_COURSE_ANGLE_STD;
     return true;
   }
@@ -93,7 +91,7 @@ bool LocalisationGPSPlugin::processRMC(const Duration & stamp,
 //-----------------------------------------------------------------------------
 void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 {
-  if(gps_->updateSatellitesViews(gsvSentence))
+  if (gps_->updateSatellitesViews(gsvSentence))
   {
     //    diagnostics_.updateConstellationReliability(gps_->getReliability());
   }
@@ -102,17 +100,17 @@ void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 //-----------------------------------------------------------------------------
 void LocalisationGPSPlugin::checkHearBeats_(const Duration & stamp)
 {
-  if(!linearSpeedRateDiagnostic_.heartBeatCallback(stamp))
+  if (!linearSpeedRateDiagnostic_.heartBeatCallback(stamp))
   {
-    linearSpeed_=std::numeric_limits<double>::quiet_NaN();
+    linearSpeed_ = std::numeric_limits<double>::quiet_NaN();
   }
 
-  if(!ggaRateDiagnostic_.heartBeatCallback(stamp))
+  if (!ggaRateDiagnostic_.heartBeatCallback(stamp))
   {
     ggaFixDiagnostic_.reset();
   }
 
-  if(!rmcRateDiagnostic_.heartBeatCallback(stamp))
+  if (!rmcRateDiagnostic_.heartBeatCallback(stamp))
   {
     rmcTrackAngleDiagnostic_.reset();
   }
@@ -137,5 +135,5 @@ DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport(const Duration & st
   return makeDiagnosticReport_();
 }
 
-}
+}  // namespace romea
 

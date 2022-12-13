@@ -1,11 +1,12 @@
-#ifndef _romea_DiagnosticsGGAFix_hpp_
-#define _romea_DiagnosticsGGAFix_hpp_
+#ifndef _ROMEA_CORE_LOCALISATION_GPS_CHECKUPGGAFIX_HPP_
+#define  ROMEA_CORE_LOCALISATION_GPS_CHECKUPGGAFIX_HPP_
 
-//std
+// std
 #include <list>
 #include <mutex>
+#include <string>
 
-//romea
+// romea
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 #include <romea_core_gps/nmea/GGAFrame.hpp>
 
@@ -13,10 +14,8 @@ namespace romea {
 
 class  CheckupGGAFix
 {
-
 public:
-
-  CheckupGGAFix(const FixQuality &minimalFixQuality);
+  explicit CheckupGGAFix(const FixQuality &minimalFixQuality);
 
   DiagnosticStatus evaluate(const GGAFrame & ggaFrame);
 
@@ -43,12 +42,8 @@ private :
 
   mutable std::mutex mutex_;
   DiagnosticReport report_;
-
 };
 
+}  // namespace romea
 
-
-}// namespace
-
-
-#endif
+#endif  // _ROMEA_CORE_LOCALISATION_GPS_CHECKUPGGAFIX_HPP_

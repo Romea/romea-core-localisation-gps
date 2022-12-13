@@ -2,8 +2,8 @@
 
 namespace
 {
-const double MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION=5;
-const unsigned short MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX=6;
+const double MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION = 5;
+const unsigned short MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX = 6;
 }
 
 namespace romea {
@@ -21,7 +21,7 @@ DiagnosticStatus CheckupGGAFix::evaluate(const GGAFrame & ggaFrame)
 {
   std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
-  if(checkFrameIsComplete_(ggaFrame))
+  if (checkFrameIsComplete_(ggaFrame))
   {
     checkFixIsReliable_(ggaFrame);
   }
@@ -34,31 +34,27 @@ DiagnosticStatus CheckupGGAFix::evaluate(const GGAFrame & ggaFrame)
 //-----------------------------------------------------------------------------
 void CheckupGGAFix::setReportInfos_(const GGAFrame & ggaFrame)
 {
-  setReportInfo(report_,"talker",ggaFrame.talkerId);
-  setReportInfo(report_,"geoid_height",ggaFrame.geoidHeight);
-  setReportInfo(report_,"altitude_above_geoid",ggaFrame.altitudeAboveGeoid);
-  setReportInfo(report_,"fix_quality",ggaFrame.fixQuality);
-  setReportInfo(report_,"number_of_satellites",ggaFrame.numberSatellitesUsedToComputeFix);
-  setReportInfo(report_,"hdop",ggaFrame.horizontalDilutionOfPrecision);
-  setReportInfo(report_,"correction_age",ggaFrame.dgpsCorrectionAgeInSecond);
-  setReportInfo(report_,"base_station_id",ggaFrame.dgpsStationIdNumber);
+  setReportInfo(report_, "talker", ggaFrame.talkerId);
+  setReportInfo(report_, "geoid_height", ggaFrame.geoidHeight);
+  setReportInfo(report_, "altitude_above_geoid", ggaFrame.altitudeAboveGeoid);
+  setReportInfo(report_, "fix_quality", ggaFrame.fixQuality);
+  setReportInfo(report_, "number_of_satellites", ggaFrame.numberSatellitesUsedToComputeFix);
+  setReportInfo(report_, "hdop", ggaFrame.horizontalDilutionOfPrecision);
+  setReportInfo(report_, "correction_age", ggaFrame.dgpsCorrectionAgeInSecond);
+  setReportInfo(report_, "base_station_id", ggaFrame.dgpsStationIdNumber);
 
-  if(ggaFrame.latitude)
+  if (ggaFrame.latitude)
   {
-    setReportInfo(report_,"latitude",(*ggaFrame.latitude).toDouble());
-  }
-  else
-  {
-    setReportInfo(report_,"latitude",ggaFrame.latitude);
+    setReportInfo(report_, "latitude", (*ggaFrame.latitude).toDouble());
+  } else {
+    setReportInfo(report_, "latitude", ggaFrame.latitude);
   }
 
-  if(ggaFrame.longitude)
+  if (ggaFrame.longitude)
   {
-    setReportInfo(report_,"longitude",(*ggaFrame.longitude).toDouble());
-  }
-  else
-  {
-    setReportInfo(report_,"longitude",ggaFrame.longitude);
+    setReportInfo(report_, "longitude", (*ggaFrame.longitude).toDouble());
+  } else {
+    setReportInfo(report_, "longitude", ggaFrame.longitude);
   }
 
 }
@@ -66,19 +62,17 @@ void CheckupGGAFix::setReportInfos_(const GGAFrame & ggaFrame)
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::checkFrameIsComplete_(const GGAFrame & ggaFrame)
 {
-  if(ggaFrame.latitude &&
-     ggaFrame.longitude &&
-     ggaFrame.altitudeAboveGeoid &&
-     ggaFrame.geoidHeight &&
-     ggaFrame.horizontalDilutionOfPrecision &&
-     ggaFrame.numberSatellitesUsedToComputeFix &&
-     ggaFrame.fixQuality)
+  if (ggaFrame.latitude &&
+      ggaFrame.longitude &&
+      ggaFrame.altitudeAboveGeoid &&
+      ggaFrame.geoidHeight &&
+      ggaFrame.horizontalDilutionOfPrecision &&
+      ggaFrame.numberSatellitesUsedToComputeFix &&
+      ggaFrame.fixQuality)
   {
     return true;
-  }
-  else
-  {
-    addDiagnostic_(DiagnosticStatus::ERROR,"GGA fix is incomplete.");
+  } else {
+    addDiagnostic_(DiagnosticStatus::ERROR, "GGA fix is incomplete.");
     return false;
   }
 }
@@ -86,12 +80,12 @@ bool CheckupGGAFix::checkFrameIsComplete_(const GGAFrame & ggaFrame)
 //-----------------------------------------------------------------------------
 void CheckupGGAFix::checkFixIsReliable_(const GGAFrame & ggaFrame)
 {
-  if(*ggaFrame.fixQuality==FixQuality::SIMULATION_FIX ||
-     (checkHorizontalDilutionOfPrecision_(ggaFrame)&
-      checkNumberSatellitesUsedToComputeFix_(ggaFrame)&
-      checkFixQuality_(ggaFrame)))
+  if (*ggaFrame.fixQuality == FixQuality::SIMULATION_FIX ||
+      (checkHorizontalDilutionOfPrecision_(ggaFrame)&
+       checkNumberSatellitesUsedToComputeFix_(ggaFrame)&
+       checkFixQuality_(ggaFrame)))
   {
-    addDiagnostic_(DiagnosticStatus::OK,"GGA fix OK.");
+    addDiagnostic_(DiagnosticStatus::OK, "GGA fix OK.");
   }
 }
 
@@ -99,14 +93,12 @@ void CheckupGGAFix::checkFixIsReliable_(const GGAFrame & ggaFrame)
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFrame)
 {
-  if(*ggaFrame.horizontalDilutionOfPrecision<
+  if (*ggaFrame.horizontalDilutionOfPrecision<
      MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION)
   {
     return true;
-  }
-  else
-  {
-    addDiagnostic_(DiagnosticStatus::WARN,"HDOP is two high.");
+  } else {
+    addDiagnostic_(DiagnosticStatus::WARN, "HDOP is two high.");
     return false;
   }
 }
@@ -114,14 +106,12 @@ bool CheckupGGAFix::checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFram
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaFrame)
 {
-  if(*ggaFrame.numberSatellitesUsedToComputeFix>=
+  if (*ggaFrame.numberSatellitesUsedToComputeFix >=
      MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX)
   {
     return true;
-  }
-  else
-  {
-    addDiagnostic_(DiagnosticStatus::WARN,"Not enough satellites to compute fix.");
+  } else {
+    addDiagnostic_(DiagnosticStatus::WARN, "Not enough satellites to compute fix.");
     return false;
   }
 }
@@ -129,13 +119,11 @@ bool CheckupGGAFix::checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaF
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::checkFixQuality_(const GGAFrame & ggaFrame)
 {
-  if(*ggaFrame.fixQuality>=minimalFixQuality_)
+  if (*ggaFrame.fixQuality >= minimalFixQuality_)
   {
     return true;
-  }
-  else
-  {
-    addDiagnostic_(DiagnosticStatus::WARN,"Fix quality is too low.");
+  } else {
+    addDiagnostic_(DiagnosticStatus::WARN, "Fix quality is too low.");
     return false;
   }
 }
@@ -143,17 +131,16 @@ bool CheckupGGAFix::checkFixQuality_(const GGAFrame & ggaFrame)
 //-----------------------------------------------------------------------------
 void CheckupGGAFix::declareReportInfos_()
 {
-  setReportInfo(report_,"talker","");
-  setReportInfo(report_,"geoid_height","");
-  setReportInfo(report_,"altitude_above_geoid","");
-  setReportInfo(report_,"fix_quality","");
-  setReportInfo(report_,"number_of_satellites","");
-  setReportInfo(report_,"hdop","");
-  setReportInfo(report_,"correction_age","");
-  setReportInfo(report_,"base_station_id","");
-  setReportInfo(report_,"latitude","");
-  setReportInfo(report_,"longitude","");
-
+  setReportInfo(report_, "talker", "");
+  setReportInfo(report_, "geoid_height", "");
+  setReportInfo(report_, "altitude_above_geoid", "");
+  setReportInfo(report_, "fix_quality", "");
+  setReportInfo(report_, "number_of_satellites", "");
+  setReportInfo(report_, "hdop", "");
+  setReportInfo(report_, "correction_age", "");
+  setReportInfo(report_, "base_station_id", "");
+  setReportInfo(report_, "latitude", "");
+  setReportInfo(report_, "longitude", "");
 }
 
 //-----------------------------------------------------------------------------
@@ -175,12 +162,11 @@ void CheckupGGAFix::reset()
 void CheckupGGAFix::addDiagnostic_(const DiagnosticStatus & status, const std::string & message)
 {
   report_.diagnostics.push_back(Diagnostic());
-  report_.diagnostics.back().status=status;
-  report_.diagnostics.back().message=message;
+  report_.diagnostics.back().status = status;
+  report_.diagnostics.back().message = message;
 }
 
-
-}// namespace
+}  // namespace romea
 
 
 
