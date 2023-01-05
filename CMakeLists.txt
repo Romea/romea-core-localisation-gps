@@ -14,8 +14,7 @@ find_package(romea_core_localisation REQUIRED)
 add_library(${PROJECT_NAME} SHARED
   src/CheckupGGAFix.cpp
   src/CheckupRMCTrackAngle.cpp
-  src/LocalisationGPSPlugin.cpp
-  )
+  src/LocalisationGPSPlugin.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -23,8 +22,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
   ${romea_core_gps_INCLUDE_DIRS}
-  ${romea_core_localisation_INCLUDE_DIRS}
-  )
+  ${romea_core_localisation_INCLUDE_DIRS})
 
 target_compile_options(${PROJECT_NAME} PRIVATE
   -Wall -Wextra -O3 -std=c++17)

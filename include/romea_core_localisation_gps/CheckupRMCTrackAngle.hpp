@@ -1,17 +1,21 @@
-#ifndef ROMEA_CORE_LOCALISATION_GPS_CHECKUPRMCTRACKANGLE_HPP_
-#define ROMEA_CORE_LOCALISATION_GPS_CHECKUPRMCTRACKANGLE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
-// std
-#include <mutex>
-#include <string>
+#ifndef ROMEA_CORE_LOCALISATION_GPS__CHECKUPRMCTRACKANGLE_HPP_
+#define ROMEA_CORE_LOCALISATION_GPS__CHECKUPRMCTRACKANGLE_HPP_
 
 // romea
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 #include <romea_core_gps/nmea/RMCFrame.hpp>
 
-namespace romea {
+// std
+#include <mutex>
+#include <string>
 
-class  CheckupRMCTrackAngle
+namespace romea
+{
+
+class CheckupRMCTrackAngle
 {
 public:
   explicit CheckupRMCTrackAngle(const double & minimalSpeedOverGround);
@@ -22,8 +26,7 @@ public:
 
   void reset();
 
-private :
-
+private:
   bool checkFrameIsComplete_(const RMCFrame & rmcFrame);
   void checkFixIsReliable_(const RMCFrame & rmcFrame);
 
@@ -38,8 +41,7 @@ private:
   DiagnosticReport report_;
 };
 
-
 }  // namespace romea
 
 
-#endif  // ROMEA_CORE_LOCALISATION_GPS_CHECKUPRMCTRACKANGLE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_GPS__CHECKUPRMCTRACKANGLE_HPP_

@@ -1,3 +1,10 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+// std
+#include <string>
+
+// local
 #include "romea_core_localisation_gps/CheckupGGAFix.hpp"
 
 namespace
@@ -6,11 +13,12 @@ const double MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION = 5;
 const unsigned short MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX = 6;
 }
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-CheckupGGAFix::CheckupGGAFix(const FixQuality & minimalFixQuality):
-  minimalFixQuality_(minimalFixQuality),
+CheckupGGAFix::CheckupGGAFix(const FixQuality & minimalFixQuality)
+: minimalFixQuality_(minimalFixQuality),
   report_()
 {
   declareReportInfos_();
@@ -21,8 +29,7 @@ DiagnosticStatus CheckupGGAFix::evaluate(const GGAFrame & ggaFrame)
 {
   std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
-  if (checkFrameIsComplete_(ggaFrame))
-  {
+  if (checkFrameIsComplete_(ggaFrame)) {
     checkFixIsReliable_(ggaFrame);
   }
 
@@ -43,32 +50,29 @@ void CheckupGGAFix::setReportInfos_(const GGAFrame & ggaFrame)
   setReportInfo(report_, "correction_age", ggaFrame.dgpsCorrectionAgeInSecond);
   setReportInfo(report_, "base_station_id", ggaFrame.dgpsStationIdNumber);
 
-  if (ggaFrame.latitude)
-  {
+  if (ggaFrame.latitude) {
     setReportInfo(report_, "latitude", (*ggaFrame.latitude).toDouble());
   } else {
     setReportInfo(report_, "latitude", ggaFrame.latitude);
   }
 
-  if (ggaFrame.longitude)
-  {
+  if (ggaFrame.longitude) {
     setReportInfo(report_, "longitude", (*ggaFrame.longitude).toDouble());
   } else {
     setReportInfo(report_, "longitude", ggaFrame.longitude);
   }
-
 }
 
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::checkFrameIsComplete_(const GGAFrame & ggaFrame)
 {
   if (ggaFrame.latitude &&
-      ggaFrame.longitude &&
-      ggaFrame.altitudeAboveGeoid &&
-      ggaFrame.geoidHeight &&
-      ggaFrame.horizontalDilutionOfPrecision &&
-      ggaFrame.numberSatellitesUsedToComputeFix &&
-      ggaFrame.fixQuality)
+    ggaFrame.longitude &&
+    ggaFrame.altitudeAboveGeoid &&
+    ggaFrame.geoidHeight &&
+    ggaFrame.horizontalDilutionOfPrecision &&
+    ggaFrame.numberSatellitesUsedToComputeFix &&
+    ggaFrame.fixQuality)
   {
     return true;
   } else {
@@ -81,9 +85,9 @@ bool CheckupGGAFix::checkFrameIsComplete_(const GGAFrame & ggaFrame)
 void CheckupGGAFix::checkFixIsReliable_(const GGAFrame & ggaFrame)
 {
   if (*ggaFrame.fixQuality == FixQuality::SIMULATION_FIX ||
-      (checkHorizontalDilutionOfPrecision_(ggaFrame)&
-       checkNumberSatellitesUsedToComputeFix_(ggaFrame)&
-       checkFixQuality_(ggaFrame)))
+    (checkHorizontalDilutionOfPrecision_(ggaFrame) &
+    checkNumberSatellitesUsedToComputeFix_(ggaFrame) &
+    checkFixQuality_(ggaFrame)))
   {
     addDiagnostic_(DiagnosticStatus::OK, "GGA fix OK.");
   }
@@ -93,8 +97,8 @@ void CheckupGGAFix::checkFixIsReliable_(const GGAFrame & ggaFrame)
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFrame)
 {
-  if (*ggaFrame.horizontalDilutionOfPrecision<
-     MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION)
+  if (*ggaFrame.horizontalDilutionOfPrecision <
+    MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION)
   {
     return true;
   } else {
@@ -107,7 +111,7 @@ bool CheckupGGAFix::checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFram
 bool CheckupGGAFix::checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaFrame)
 {
   if (*ggaFrame.numberSatellitesUsedToComputeFix >=
-     MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX)
+    MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX)
   {
     return true;
   } else {
@@ -119,8 +123,7 @@ bool CheckupGGAFix::checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaF
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::checkFixQuality_(const GGAFrame & ggaFrame)
 {
-  if (*ggaFrame.fixQuality >= minimalFixQuality_)
-  {
+  if (*ggaFrame.fixQuality >= minimalFixQuality_) {
     return true;
   } else {
     addDiagnostic_(DiagnosticStatus::WARN, "Fix quality is too low.");
@@ -167,6 +170,3 @@ void CheckupGGAFix::addDiagnostic_(const DiagnosticStatus & status, const std::s
 }
 
 }  // namespace romea
-
-
-

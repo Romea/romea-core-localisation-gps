@@ -1,16 +1,23 @@
-#ifndef ROMEA_CORE_LOCALISATION_GPS_LOCALISATIONGPSPLUGIN_HPP_
-#define ROMEA_CORE_LOCALISATION_GPS_LOCALISATIONGPSPLUGIN_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
-// std
-#include <memory>
-#include <string>
 
-// romea
+#ifndef ROMEA_CORE_LOCALISATION_GPS__LOCALISATIONGPSPLUGIN_HPP_
+#define ROMEA_CORE_LOCALISATION_GPS__LOCALISATIONGPSPLUGIN_HPP_
+
+
+// romea core
 #include <romea_core_gps/GPSReceiver.hpp>
 #include <romea_core_common/geodesy/ENUConverter.hpp>
 #include <romea_core_common/diagnostic/CheckupRate.hpp>
 #include <romea_core_localisation/ObservationPosition.hpp>
 #include <romea_core_localisation/ObservationCourse.hpp>
+
+// std
+#include <memory>
+#include <string>
+
+// local
 #include "CheckupRMCTrackAngle.hpp"
 #include "CheckupGGAFix.hpp"
 
@@ -64,4 +71,4 @@ private:
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_GPS_LOCALISATIONGPSPLUGIN_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_GPS__LOCALISATIONGPSPLUGIN_HPP_

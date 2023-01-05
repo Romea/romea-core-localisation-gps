@@ -1,19 +1,31 @@
-#include "romea_core_localisation_gps/LocalisationGPSPlugin.hpp"
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+// std
 #include <iostream>
+#include <utility>
+#include <string>
+#include <limits>
+
+// local
+#include "romea_core_localisation_gps/LocalisationGPSPlugin.hpp"
+
 
 namespace
 {
-const double DEFAULT_COURSE_ANGLE_STD = 20/180.*M_PI;
+const double DEFAULT_COURSE_ANGLE_STD = 20 / 180. * M_PI;
 }
 
 
-namespace romea {
+namespace romea
+{
 
 //-----------------------------------------------------------------------------
-LocalisationGPSPlugin::LocalisationGPSPlugin(std::unique_ptr<GPSReceiver> gps,
-                                             const FixQuality & minimalFixQuality,
-                                             const double & minimalSpeedOverGround):
-  gps_(std::move(gps)),
+LocalisationGPSPlugin::LocalisationGPSPlugin(
+  std::unique_ptr<GPSReceiver> gps,
+  const FixQuality & minimalFixQuality,
+  const double & minimalSpeedOverGround)
+: gps_(std::move(gps)),
   enuConverter_(),
   linearSpeed_(std::numeric_limits<double>::quiet_NaN()),
   ggaRateDiagnostic_("gga", 1.0, 0.1),
@@ -37,32 +49,35 @@ const ENUConverter & LocalisationGPSPlugin::getENUConverter()const
 }
 
 //-----------------------------------------------------------------------------
-void LocalisationGPSPlugin::processLinearSpeed(const Duration & stamp,
-                                               const double & linearSpeed)
+void LocalisationGPSPlugin::processLinearSpeed(
+  const Duration & stamp,
+  const double & linearSpeed)
 {
   linearSpeed_.store(linearSpeed);
   linearSpeedRateDiagnostic_.evaluate(stamp);
 }
 
 //-----------------------------------------------------------------------------
-bool LocalisationGPSPlugin::processGGA(const Duration & stamp,
-                                       const std::string & ggaSentence,
-                                       ObservationPosition & positionObs)
+bool LocalisationGPSPlugin::processGGA(
+  const Duration & stamp,
+  const std::string & ggaSentence,
+  ObservationPosition & positionObs)
 {
   GGAFrame ggaFrame(ggaSentence);
   if (ggaRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-      ggaFixDiagnostic_.evaluate(ggaFrame) == DiagnosticStatus::OK)
+    ggaFixDiagnostic_.evaluate(ggaFrame) == DiagnosticStatus::OK)
   {
-    auto geodeticCoordinates = makeGeodeticCoordinates((*ggaFrame.latitude).toDouble(),
-                                                       (*ggaFrame.longitude).toDouble(),
-                                                       (*ggaFrame.altitudeAboveGeoid+
-                                                        *ggaFrame.geoidHeight));
+    auto geodeticCoordinates = makeGeodeticCoordinates(
+      (*ggaFrame.latitude).toDouble(),
+      (*ggaFrame.longitude).toDouble(),
+      (*ggaFrame.altitudeAboveGeoid +
+      *ggaFrame.geoidHeight));
 
     Eigen::Vector3d position = enuConverter_.toENU(geodeticCoordinates);
-    double fixStd = *ggaFrame.horizontalDilutionOfPrecision*gps_->getUERE(*ggaFrame.fixQuality);
+    double fixStd = *ggaFrame.horizontalDilutionOfPrecision * gps_->getUERE(*ggaFrame.fixQuality);
     positionObs.Y(ObservationPosition::POSITION_X) = position.x();
     positionObs.Y(ObservationPosition::POSITION_Y) = position.y();
-    positionObs.R() = Eigen::Matrix2d::Identity()*fixStd*fixStd;
+    positionObs.R() = Eigen::Matrix2d::Identity() * fixStd * fixStd;
     positionObs.levelArm = gps_->getAntennaBodyPosition();
     return true;
   }
@@ -71,17 +86,18 @@ bool LocalisationGPSPlugin::processGGA(const Duration & stamp,
 }
 
 //-----------------------------------------------------------------------------
-bool LocalisationGPSPlugin::processRMC(const Duration & stamp,
-                                       const std::string & rmcSentence,
-                                       ObservationCourse & courseObs)
+bool LocalisationGPSPlugin::processRMC(
+  const Duration & stamp,
+  const std::string & rmcSentence,
+  ObservationCourse & courseObs)
 {
   RMCFrame rmcFrame(rmcSentence);
   if (rmcRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-      rmcTrackAngleDiagnostic_.evaluate(rmcFrame) == DiagnosticStatus::OK &&
-      std::isfinite(linearSpeed_))
+    rmcTrackAngleDiagnostic_.evaluate(rmcFrame) == DiagnosticStatus::OK &&
+    std::isfinite(linearSpeed_))
   {
     courseObs.Y() = trackAngleToCourseAngle(*rmcFrame.trackAngleTrue, linearSpeed_);
-    courseObs.R() = DEFAULT_COURSE_ANGLE_STD *DEFAULT_COURSE_ANGLE_STD;
+    courseObs.R() = DEFAULT_COURSE_ANGLE_STD * DEFAULT_COURSE_ANGLE_STD;
     return true;
   }
 
@@ -91,8 +107,7 @@ bool LocalisationGPSPlugin::processRMC(const Duration & stamp,
 //-----------------------------------------------------------------------------
 void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 {
-  if (gps_->updateSatellitesViews(gsvSentence))
-  {
+  if (gps_->updateSatellitesViews(gsvSentence)) {
     //    diagnostics_.updateConstellationReliability(gps_->getReliability());
   }
 }
@@ -100,18 +115,15 @@ void LocalisationGPSPlugin::processGSV(const std::string & gsvSentence)
 //-----------------------------------------------------------------------------
 void LocalisationGPSPlugin::checkHearBeats_(const Duration & stamp)
 {
-  if (!linearSpeedRateDiagnostic_.heartBeatCallback(stamp))
-  {
+  if (!linearSpeedRateDiagnostic_.heartBeatCallback(stamp)) {
     linearSpeed_ = std::numeric_limits<double>::quiet_NaN();
   }
 
-  if (!ggaRateDiagnostic_.heartBeatCallback(stamp))
-  {
+  if (!ggaRateDiagnostic_.heartBeatCallback(stamp)) {
     ggaFixDiagnostic_.reset();
   }
 
-  if (!rmcRateDiagnostic_.heartBeatCallback(stamp))
-  {
+  if (!rmcRateDiagnostic_.heartBeatCallback(stamp)) {
     rmcTrackAngleDiagnostic_.reset();
   }
 }
@@ -136,4 +148,3 @@ DiagnosticReport LocalisationGPSPlugin::makeDiagnosticReport(const Duration & st
 }
 
 }  // namespace romea
-

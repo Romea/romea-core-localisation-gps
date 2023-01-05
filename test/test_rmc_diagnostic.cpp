@@ -1,5 +1,11 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 // gtest
 #include <gtest/gtest.h>
+
+// std
+#include <string>
 
 // romea
 #include "helper.hpp"
@@ -8,8 +14,8 @@
 class TestRMCTrackAngleDiagnostic : public ::testing::Test
 {
 public:
-  TestRMCTrackAngleDiagnostic():
-    frame(minimalGoodRMCFrame()),
+  TestRMCTrackAngleDiagnostic()
+  : frame(minimalGoodRMCFrame()),
     diagnostic(1)
   {
   }
@@ -54,15 +60,17 @@ TEST_F(TestRMCTrackAngleDiagnostic, checkMinimalGoodFrame)
 }
 
 //-----------------------------------------------------------------------------
-void checkMissingData(romea::CheckupRMCTrackAngle & diagnostic,
-                      const romea::RMCFrame & frame,
-                      const std::string & missingDataName)
+void checkMissingData(
+  romea::CheckupRMCTrackAngle & diagnostic,
+  const romea::RMCFrame & frame,
+  const std::string & missingDataName)
 {
   EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::ERROR);
   EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::ERROR);
   EXPECT_STREQ(diagnostic.getReport().info.at(missingDataName).c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(),
-              "RMC track angle is incomplete.");
+  EXPECT_STREQ(
+    diagnostic.getReport().diagnostics.front().message.c_str(),
+    "RMC track angle is incomplete.");
 }
 
 //-----------------------------------------------------------------------------
@@ -83,14 +91,16 @@ TEST_F(TestRMCTrackAngleDiagnostic, checkMissingTrackAngle)
 TEST_F(TestRMCTrackAngleDiagnostic, checkUnreliableTrackAngle)
 {
   frame.speedOverGroundInMeterPerSecond = 0.5;
-  EXPECT_EQ(diagnostic.evaluate(frame) , romea::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::WARN);
   EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::WARN);
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(),
-               "RMC track angle is not reliable because vehicle speed is lower than 1 m/s.");
+  EXPECT_STREQ(
+    diagnostic.getReport().diagnostics.front().message.c_str(),
+    "RMC track angle is not reliable because vehicle speed is lower than 1 m/s.");
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

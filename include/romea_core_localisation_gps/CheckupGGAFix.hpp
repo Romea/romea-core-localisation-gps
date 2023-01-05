@@ -1,21 +1,26 @@
-#ifndef _ROMEA_CORE_LOCALISATION_GPS_CHECKUPGGAFIX_HPP_
-#define  ROMEA_CORE_LOCALISATION_GPS_CHECKUPGGAFIX_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+#ifndef  ROMEA_CORE_LOCALISATION_GPS__CHECKUPGGAFIX_HPP_
+#define  ROMEA_CORE_LOCALISATION_GPS__CHECKUPGGAFIX_HPP_
+
+// romea
+#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
+#include <romea_core_gps/nmea/GGAFrame.hpp>
 
 // std
 #include <list>
 #include <mutex>
 #include <string>
 
-// romea
-#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
-#include <romea_core_gps/nmea/GGAFrame.hpp>
 
-namespace romea {
+namespace romea
+{
 
-class  CheckupGGAFix
+class CheckupGGAFix
 {
 public:
-  explicit CheckupGGAFix(const FixQuality &minimalFixQuality);
+  explicit CheckupGGAFix(const FixQuality & minimalFixQuality);
 
   DiagnosticStatus evaluate(const GGAFrame & ggaFrame);
 
@@ -23,8 +28,7 @@ public:
 
   void reset();
 
-private :
-
+private:
   void declareReportInfos_();
   void setReportInfos_(const GGAFrame & ggaFrame);
   void addDiagnostic_(const DiagnosticStatus & status, const std::string & message);
@@ -35,8 +39,7 @@ private :
   bool checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFrame);
   bool checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaFrame);
 
-private :
-
+private:
   FixQuality minimalFixQuality_;
   double maximalHorizontalDilutionOfPrecision_;
 
@@ -46,4 +49,4 @@ private :
 
 }  // namespace romea
 
-#endif  // _ROMEA_CORE_LOCALISATION_GPS_CHECKUPGGAFIX_HPP_
+#endif  // _ROMEA_CORE_LOCALISATION_GPS__CHECKUPGGAFIX_HPP_
