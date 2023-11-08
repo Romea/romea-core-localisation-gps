@@ -31,10 +31,10 @@ bool boolean(const romea::DiagnosticStatus & status)
   return status == romea::DiagnosticStatus::OK;
 }
 
-class TestGPSPlugin : public ::testing::Test
+class TestSingleAntennaGPSPlugin : public ::testing::Test
 {
 public:
-  TestGPSPlugin()
+  TestSingleAntennaGPSPlugin()
   : stamp(),
     gga_frame(minimalGoodGGAFrame()),
     rmc_frame(minimalGoodRMCFrame()),
@@ -50,7 +50,7 @@ public:
     auto gps = std::make_unique<romea::GPSReceiver>();
     gps->setAntennaBodyPosition(Eigen::Vector3d(0.3, 0, 2.));
 
-    gps_plugin = std::make_unique<romea::LocalisationGPSPlugin>(
+    gps_plugin = std::make_unique<romea::LocalisationSingleAntennaGPSPlugin>(
       std::move(gps), romea::FixQuality::RTK_FIX, 1.);
   }
 
@@ -111,14 +111,14 @@ public:
 
   romea::ObservationCourse course;
   romea::ObservationPosition position;
-  std::unique_ptr<romea::LocalisationGPSPlugin> gps_plugin;
+  std::unique_ptr<romea::LocalisationSingleAntennaGPSPlugin> gps_plugin;
 
   romea::DiagnosticReport report;
 };
 
 
 //-----------------------------------------------------------------------------
-TEST_F(TestGPSPlugin, testAllOk)
+TEST_F(TestSingleAntennaGPSPlugin, testAllOk)
 {
   check(
     romea::DiagnosticStatus::OK,
@@ -127,7 +127,7 @@ TEST_F(TestGPSPlugin, testAllOk)
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestGPSPlugin, testFixOKTrakAngleWarn)
+TEST_F(TestSingleAntennaGPSPlugin, testFixOKTrakAngleWarn)
 {
   rmc_frame.speedOverGroundInMeterPerSecond = 0.5;
   check(
@@ -137,7 +137,7 @@ TEST_F(TestGPSPlugin, testFixOKTrakAngleWarn)
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestGPSPlugin, testFixOKTrakAngleError)
+TEST_F(TestSingleAntennaGPSPlugin, testFixOKTrakAngleError)
 {
   rmc_frame.trackAngleTrue.reset();
   check(
@@ -147,7 +147,7 @@ TEST_F(TestGPSPlugin, testFixOKTrakAngleError)
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestGPSPlugin, testFixWarnTrackAngleOK)
+TEST_F(TestSingleAntennaGPSPlugin, testFixWarnTrackAngleOK)
 {
   gga_frame.numberSatellitesUsedToComputeFix = 5;
   check(
@@ -157,7 +157,7 @@ TEST_F(TestGPSPlugin, testFixWarnTrackAngleOK)
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestGPSPlugin, testFixErrorTrackAngleOK)
+TEST_F(TestSingleAntennaGPSPlugin, testFixErrorTrackAngleOK)
 {
   gga_frame.fixQuality.reset();
   check(
@@ -167,7 +167,7 @@ TEST_F(TestGPSPlugin, testFixErrorTrackAngleOK)
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestGPSPlugin, testCannotComputeCourseBecauseLinearSpeedIsMissing)
+TEST_F(TestSingleAntennaGPSPlugin, testCannotComputeCourseBecauseLinearSpeedIsMissing)
 {
   linear_speed = std::numeric_limits<double>::quiet_NaN();
   check(

@@ -1,4 +1,5 @@
 #include "romea_core_gps/nmea/GGAFrame.hpp"
+#include "romea_core_gps/nmea/HDTFrame.hpp"
 #include "romea_core_gps/nmea/RMCFrame.hpp"
 
 romea::GGAFrame minimalGoodGGAFrame()
@@ -25,5 +26,13 @@ romea::RMCFrame minimalGoodRMCFrame()
   frame.speedOverGroundInMeterPerSecond = 3.2;
   frame.trackAngleTrue = 1.54;
   frame.magneticDeviation = 0.0378;
+  return frame;
+}
+
+romea::HDTFrame minimalGoodHDTFrame()
+{
+  romea::HDTFrame frame;
+  frame.talkerId = romea::TalkerId::GL;
+  frame.heading = 0.378;
   return frame;
 }

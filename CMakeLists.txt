@@ -14,6 +14,7 @@ find_package(romea_core_localisation REQUIRED)
 add_library(${PROJECT_NAME} SHARED
   src/CheckupGGAFix.cpp
   src/CheckupRMCTrackAngle.cpp
+  src/CheckupHDTTrackAngle.cpp
   src/LocalisationGPSPlugin.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
