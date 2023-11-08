@@ -16,13 +16,15 @@
 #ifndef ROMEA_CORE_LOCALISATION_GPS__CHECKUPHDTTRACKANGLE_HPP_
 #define ROMEA_CORE_LOCALISATION_GPS__CHECKUPHDTTRACKANGLE_HPP_
 
-// romea
-#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
-#include <romea_core_gps/nmea/HDTFrame.hpp>
 
 // std
 #include <mutex>
 #include <string>
+
+// romea
+#include "romea_core_common/diagnostic/DiagnosticReport.hpp"
+#include "romea_core_gps/nmea/HDTFrame.hpp"
+
 
 namespace romea
 {

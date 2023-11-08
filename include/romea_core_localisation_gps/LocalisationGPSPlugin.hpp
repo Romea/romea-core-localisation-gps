@@ -17,16 +17,16 @@
 #define ROMEA_CORE_LOCALISATION_GPS__LOCALISATIONGPSPLUGIN_HPP_
 
 
-// romea core
-#include <romea_core_gps/GPSReceiver.hpp>
-#include <romea_core_common/geodesy/ENUConverter.hpp>
-#include <romea_core_common/diagnostic/CheckupRate.hpp>
-#include <romea_core_localisation/ObservationPosition.hpp>
-#include <romea_core_localisation/ObservationCourse.hpp>
-
 // std
 #include <memory>
 #include <string>
+
+// romea core
+#include "romea_core_gps/GPSReceiver.hpp"
+#include "romea_core_common/geodesy/ENUConverter.hpp"
+#include "romea_core_common/diagnostic/CheckupRate.hpp"
+#include "romea_core_localisation/ObservationPosition.hpp"
+#include "romea_core_localisation/ObservationCourse.hpp"
 
 // local
 #include "CheckupGGAFix.hpp"

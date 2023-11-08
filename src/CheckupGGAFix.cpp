@@ -22,7 +22,7 @@
 namespace
 {
 const double MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION = 5;
-const unsigned short MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX = 6;
+const uint16_t MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX = 6;
 }
 
 namespace romea
