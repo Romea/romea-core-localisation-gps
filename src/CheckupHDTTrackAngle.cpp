@@ -22,6 +22,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 CheckupHDTTrackAngle::CheckupHDTTrackAngle()
@@ -91,4 +93,5 @@ void CheckupHDTTrackAngle::reset()
   declareReportInfos_();
 }
 
+}  // namespace core
 }  // namespace romea

@@ -31,6 +31,8 @@ const double DEFAULT_COURSE_ANGLE_STD = 20 / 180. * M_PI;
 
 namespace romea
 {
+namespace core
+{
 
 
 //-----------------------------------------------------------------------------
@@ -225,4 +227,5 @@ DiagnosticReport LocalisationDualAntennaGPSPlugin::makeDiagnosticReport_()
   return report;
 }
 
+}  // namespace core
 }  // namespace romea

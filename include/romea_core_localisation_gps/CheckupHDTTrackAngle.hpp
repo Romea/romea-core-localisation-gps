@@ -28,6 +28,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class CheckupHDTTrackAngle
 {
@@ -52,6 +54,7 @@ private:
   DiagnosticReport report_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 

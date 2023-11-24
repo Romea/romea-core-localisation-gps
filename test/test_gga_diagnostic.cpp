@@ -26,14 +26,14 @@
 class TestGGAFixDiagnostic : public ::testing::Test
 {
 public:
-  TestGGAFixDiagnostic():
-    frame(minimalGoodGGAFrame()),
-    diagnostic(romea::FixQuality::RTK_FIX)
+  TestGGAFixDiagnostic()
+  : frame(minimalGoodGGAFrame()),
+    diagnostic(romea::core::FixQuality::RTK_FIX)
   {
   }
 
-  romea::GGAFrame frame;
-  romea::CheckupGGAFix diagnostic;
+  romea::core::GGAFrame frame;
+  romea::core::CheckupGGAFix diagnostic;
 };
 
 //-----------------------------------------------------------------------------
@@ -73,8 +73,8 @@ TEST_F(TestGGAFixDiagnostic, checkEmptyReportAfterReset)
 //-----------------------------------------------------------------------------
 TEST_F(TestGGAFixDiagnostic, checkMinimalGoodFrame)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::OK);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::OK);
+  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::OK);
+  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::OK);
   EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(), "GGA fix OK.");
   EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "GNSS");
   EXPECT_STREQ(diagnostic.getReport().info.at("longitude").c_str(), "0.03");
@@ -89,24 +89,28 @@ TEST_F(TestGGAFixDiagnostic, checkMinimalGoodFrame)
 }
 
 //-----------------------------------------------------------------------------
-void checkMissingData(romea::CheckupGGAFix & diagnostic,
-                      const romea::GGAFrame & frame,
-                      const std::string & missingDataName)
+void checkMissingData(
+  romea::core::CheckupGGAFix & diagnostic,
+  const romea::core::GGAFrame & frame,
+  const std::string & missingDataName)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::ERROR);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::ERROR);
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(),
-               "GGA fix is incomplete.");
+  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::ERROR);
+  EXPECT_EQ(
+    diagnostic.getReport().diagnostics.front().status,
+    romea::core::DiagnosticStatus::ERROR);
+  EXPECT_STREQ(
+    diagnostic.getReport().diagnostics.front().message.c_str(), "GGA fix is incomplete.");
   EXPECT_STREQ(diagnostic.getReport().info.at(missingDataName).c_str(), "");
 }
 
 //-----------------------------------------------------------------------------
-void checkUnreliableData(romea::CheckupGGAFix & diagnostic,
-                         const romea::GGAFrame & frame,
-                         const std::string & message)
+void checkUnreliableData(
+  romea::core::CheckupGGAFix & diagnostic,
+  const romea::core::GGAFrame & frame,
+  const std::string & message)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::WARN);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::WARN);
   EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(), message.c_str());
 }
 
@@ -176,29 +180,32 @@ TEST_F(TestGGAFixDiagnostic, unreliableHDOP)
 //-----------------------------------------------------------------------------
 TEST_F(TestGGAFixDiagnostic, unreliableFixQuality)
 {
-  frame.fixQuality = romea::FixQuality::DGPS_FIX;
+  frame.fixQuality = romea::core::FixQuality::DGPS_FIX;
   checkUnreliableData(diagnostic, frame, "Fix quality is too low.");
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestGGAFixDiagnostic, severalUnreliableData)
 {
-  frame.fixQuality = romea::FixQuality::FLOAT_RTK_FIX;
+  frame.fixQuality = romea::core::FixQuality::FLOAT_RTK_FIX;
   frame.horizontalDilutionOfPrecision = 5.2;
 
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::WARN);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::WARN);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.back().status, romea::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.getReport().diagnostics.back().status, romea::core::DiagnosticStatus::WARN);
 
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(),
-               "HDOP is two high.");
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.back().message.c_str(),
-               "Fix quality is too low.");
+  EXPECT_STREQ(
+    diagnostic.getReport().diagnostics.front().message.c_str(),
+    "HDOP is two high.");
+  EXPECT_STREQ(
+    diagnostic.getReport().diagnostics.back().message.c_str(),
+    "Fix quality is too low.");
 }
 
 
 //-----------------------------------------------------------------------------
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

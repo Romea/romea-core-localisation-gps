@@ -20,12 +20,14 @@
 // local
 #include "romea_core_localisation_gps/CheckupRMCTrackAngle.hpp"
 
-namespace romea {
-
+namespace romea
+{
+namespace core
+{
 
 //-----------------------------------------------------------------------------
-CheckupRMCTrackAngle::CheckupRMCTrackAngle(const double & minimalSpeedOverGround):
-  minimalSpeedOverGround_(minimalSpeedOverGround),
+CheckupRMCTrackAngle::CheckupRMCTrackAngle(const double & minimalSpeedOverGround)
+: minimalSpeedOverGround_(minimalSpeedOverGround),
   mutex_(),
   report_()
 {
@@ -37,8 +39,7 @@ CheckupRMCTrackAngle::CheckupRMCTrackAngle(const double & minimalSpeedOverGround
 DiagnosticStatus CheckupRMCTrackAngle::evaluate(const RMCFrame & rmcFrame)
 {
   std::lock_guard<std::mutex> lock(mutex_);
-  if (checkFrameIsComplete_(rmcFrame))
-  {
+  if (checkFrameIsComplete_(rmcFrame)) {
     checkFixIsReliable_(rmcFrame);
   }
   setReportInfos_(rmcFrame);
@@ -48,12 +49,11 @@ DiagnosticStatus CheckupRMCTrackAngle::evaluate(const RMCFrame & rmcFrame)
 //-----------------------------------------------------------------------------
 void CheckupRMCTrackAngle::checkFixIsReliable_(const RMCFrame & rmcFrame)
 {
-  if (*rmcFrame.speedOverGroundInMeterPerSecond < minimalSpeedOverGround_)
-  {
+  if (*rmcFrame.speedOverGroundInMeterPerSecond < minimalSpeedOverGround_) {
     std::stringstream msg;
     msg << "RMC track angle is not reliable ";
     msg << "because vehicle speed is lower than ";
-    msg << minimalSpeedOverGround_ <<" m/s.";
+    msg << minimalSpeedOverGround_ << " m/s.";
     setDiagnostic_(DiagnosticStatus::WARN, msg.str());
   } else {
     setDiagnostic_(DiagnosticStatus::OK, "RMC track angle OK.");
@@ -71,7 +71,7 @@ const DiagnosticReport & CheckupRMCTrackAngle::getReport() const
 bool CheckupRMCTrackAngle::checkFrameIsComplete_(const RMCFrame & rmcFrame)
 {
   if (rmcFrame.speedOverGroundInMeterPerSecond &&
-      rmcFrame.trackAngleTrue)
+    rmcFrame.trackAngleTrue)
   {
     return true;
   } else {
@@ -90,8 +90,9 @@ void CheckupRMCTrackAngle::setReportInfos_(const RMCFrame & rmcFrame)
 }
 
 //-----------------------------------------------------------------------------
-void CheckupRMCTrackAngle::setDiagnostic_(const DiagnosticStatus & status,
-                                          const std::string & message)
+void CheckupRMCTrackAngle::setDiagnostic_(
+  const DiagnosticStatus & status,
+  const std::string & message)
 {
   report_.diagnostics.clear();
   report_.diagnostics.push_back({status, message});
@@ -114,7 +115,5 @@ void CheckupRMCTrackAngle::reset()
   declareReportInfos_();
 }
 
+}  // namespace core
 }  // namespace romea
-
-
-

@@ -27,6 +27,8 @@ const uint16_t MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX = 6;
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 CheckupGGAFix::CheckupGGAFix(const FixQuality & minimalFixQuality)
@@ -181,4 +183,5 @@ void CheckupGGAFix::addDiagnostic_(const DiagnosticStatus & status, const std::s
   report_.diagnostics.back().message = message;
 }
 
+}  // namespace core
 }  // namespace romea

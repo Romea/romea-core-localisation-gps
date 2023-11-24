@@ -32,8 +32,8 @@ public:
   {
   }
 
-  romea::RMCFrame frame;
-  romea::CheckupRMCTrackAngle diagnostic;
+  romea::core::RMCFrame frame;
+  romea::core::CheckupRMCTrackAngle diagnostic;
 };
 
 
@@ -62,8 +62,8 @@ TEST_F(TestRMCTrackAngleDiagnostic, checkEmptyReportAfterReset)
 //-----------------------------------------------------------------------------
 TEST_F(TestRMCTrackAngleDiagnostic, checkMinimalGoodFrame)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::OK);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::OK);
+  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::OK);
+  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::OK);
   EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(), "RMC track angle OK.");
   EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "NAVSTAR");
   EXPECT_STREQ(diagnostic.getReport().info.at("speed_over_ground").c_str(), "3.2");
@@ -73,12 +73,14 @@ TEST_F(TestRMCTrackAngleDiagnostic, checkMinimalGoodFrame)
 
 //-----------------------------------------------------------------------------
 void checkMissingData(
-  romea::CheckupRMCTrackAngle & diagnostic,
-  const romea::RMCFrame & frame,
+  romea::core::CheckupRMCTrackAngle & diagnostic,
+  const romea::core::RMCFrame & frame,
   const std::string & missingDataName)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::ERROR);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::ERROR);
+  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::ERROR);
+  EXPECT_EQ(
+    diagnostic.getReport().diagnostics.front().status,
+    romea::core::DiagnosticStatus::ERROR);
   EXPECT_STREQ(diagnostic.getReport().info.at(missingDataName).c_str(), "");
   EXPECT_STREQ(
     diagnostic.getReport().diagnostics.front().message.c_str(),
@@ -103,8 +105,8 @@ TEST_F(TestRMCTrackAngleDiagnostic, checkMissingTrackAngle)
 TEST_F(TestRMCTrackAngleDiagnostic, checkUnreliableTrackAngle)
 {
   frame.speedOverGroundInMeterPerSecond = 0.5;
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::WARN);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::WARN);
   EXPECT_STREQ(
     diagnostic.getReport().diagnostics.front().message.c_str(),
     "RMC track angle is not reliable because vehicle speed is lower than 1 m/s.");

@@ -26,9 +26,9 @@
 #include "helper.hpp"
 #include "romea_core_localisation_gps/LocalisationGPSPlugin.hpp"
 
-bool boolean(const romea::DiagnosticStatus & status)
+bool boolean(const romea::core::DiagnosticStatus & status)
 {
-  return status == romea::DiagnosticStatus::OK;
+  return status == romea::core::DiagnosticStatus::OK;
 }
 
 class TestSingleAntennaGPSPlugin : public ::testing::Test
@@ -47,24 +47,24 @@ public:
 
   void SetUp() override
   {
-    auto gps = std::make_unique<romea::GPSReceiver>();
+    auto gps = std::make_unique<romea::core::GPSReceiver>();
     gps->setAntennaBodyPosition(Eigen::Vector3d(0.3, 0, 2.));
 
-    gps_plugin = std::make_unique<romea::LocalisationSingleAntennaGPSPlugin>(
-      std::move(gps), romea::FixQuality::RTK_FIX, 1.);
+    gps_plugin = std::make_unique<romea::core::LocalisationSingleAntennaGPSPlugin>(
+      std::move(gps), romea::core::FixQuality::RTK_FIX, 1.);
   }
 
 
-  const romea::Diagnostic & diagnostic(const size_t & index)
+  const romea::core::Diagnostic & diagnostic(const size_t & index)
   {
     return *std::next(std::cbegin(report.diagnostics), index);
   }
 
 
   void check(
-    const romea::DiagnosticStatus & finalFixStatus,
-    const romea::DiagnosticStatus & finalTrackStatus,
-    const romea::DiagnosticStatus & finalLinearSpeedStatus)
+    const romea::core::DiagnosticStatus & finalFixStatus,
+    const romea::core::DiagnosticStatus & finalTrackStatus,
+    const romea::core::DiagnosticStatus & finalLinearSpeedStatus)
   {
     std::string gga_sentence = gga_frame.toNMEA();
     std::string rmc_sentence = rmc_frame.toNMEA();
@@ -72,48 +72,48 @@ public:
 
     if (std::isfinite(linear_speed)) {
       for (size_t n = 0; n <= 20; ++n) {
-        romea::Duration stamp = romea::durationFromSecond(n / 20.);
+        romea::core::Duration stamp = romea::core::durationFromSecond(n / 20.);
         gps_plugin->processLinearSpeed(stamp, linear_speed);
       }
     }
 
     for (size_t n = 0; n < 4; ++n) {
-      romea::Duration stamp = romea::durationFromSecond(0.5 + n / 10.);
+      romea::core::Duration stamp = romea::core::durationFromSecond(0.5 + n / 10.);
       EXPECT_FALSE(gps_plugin->processGGA(stamp, gga_sentence, position));
       EXPECT_FALSE(gps_plugin->processRMC(stamp, rmc_sentence, course));
       report = gps_plugin->makeDiagnosticReport(stamp);
 
       EXPECT_EQ(report.diagnostics.size(), 3);
       EXPECT_EQ(
-        diagnostic(0).status, std::isfinite(
-          linear_speed) ? romea::DiagnosticStatus::OK : romea::DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(1).status, romea::DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(2).status, romea::DiagnosticStatus::ERROR);
+        diagnostic(0).status, std::isfinite(linear_speed) ?
+        romea::core::DiagnosticStatus::OK : romea::core::DiagnosticStatus::ERROR);
+      EXPECT_EQ(diagnostic(1).status, romea::core::DiagnosticStatus::ERROR);
+      EXPECT_EQ(diagnostic(2).status, romea::core::DiagnosticStatus::ERROR);
     }
 
-    romea::Duration stamp = romea::durationFromSecond(0.5);
+    romea::core::Duration stamp = romea::core::durationFromSecond(0.5);
     EXPECT_EQ(gps_plugin->processGGA(stamp, gga_sentence, position), boolean(finalFixStatus));
     EXPECT_EQ(
       gps_plugin->processRMC(stamp, rmc_sentence, course), boolean(
         finalTrackStatus) && boolean(finalLinearSpeedStatus));
     report = gps_plugin->makeDiagnosticReport(stamp);
     EXPECT_EQ(diagnostic(0).status, finalLinearSpeedStatus);
-    EXPECT_EQ(diagnostic(1).status, romea::DiagnosticStatus::OK);
+    EXPECT_EQ(diagnostic(1).status, romea::core::DiagnosticStatus::OK);
     EXPECT_EQ(diagnostic(2).status, finalFixStatus);
-    EXPECT_EQ(diagnostic(3).status, romea::DiagnosticStatus::OK);
+    EXPECT_EQ(diagnostic(3).status, romea::core::DiagnosticStatus::OK);
     EXPECT_EQ(diagnostic(4).status, finalTrackStatus);
   }
 
-  romea::Duration stamp;
-  romea::GGAFrame gga_frame;
-  romea::RMCFrame rmc_frame;
+  romea::core::Duration stamp;
+  romea::core::GGAFrame gga_frame;
+  romea::core::RMCFrame rmc_frame;
   double linear_speed;
 
-  romea::ObservationCourse course;
-  romea::ObservationPosition position;
-  std::unique_ptr<romea::LocalisationSingleAntennaGPSPlugin> gps_plugin;
+  romea::core::ObservationCourse course;
+  romea::core::ObservationPosition position;
+  std::unique_ptr<romea::core::LocalisationSingleAntennaGPSPlugin> gps_plugin;
 
-  romea::DiagnosticReport report;
+  romea::core::DiagnosticReport report;
 };
 
 
@@ -121,9 +121,9 @@ public:
 TEST_F(TestSingleAntennaGPSPlugin, testAllOk)
 {
   check(
-    romea::DiagnosticStatus::OK,
-    romea::DiagnosticStatus::OK,
-    romea::DiagnosticStatus::OK);
+    romea::core::DiagnosticStatus::OK,
+    romea::core::DiagnosticStatus::OK,
+    romea::core::DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
@@ -131,9 +131,9 @@ TEST_F(TestSingleAntennaGPSPlugin, testFixOKTrakAngleWarn)
 {
   rmc_frame.speedOverGroundInMeterPerSecond = 0.5;
   check(
-    romea::DiagnosticStatus::OK,
-    romea::DiagnosticStatus::WARN,
-    romea::DiagnosticStatus::OK);
+    romea::core::DiagnosticStatus::OK,
+    romea::core::DiagnosticStatus::WARN,
+    romea::core::DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
@@ -141,9 +141,9 @@ TEST_F(TestSingleAntennaGPSPlugin, testFixOKTrakAngleError)
 {
   rmc_frame.trackAngleTrue.reset();
   check(
-    romea::DiagnosticStatus::OK,
-    romea::DiagnosticStatus::ERROR,
-    romea::DiagnosticStatus::OK);
+    romea::core::DiagnosticStatus::OK,
+    romea::core::DiagnosticStatus::ERROR,
+    romea::core::DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
@@ -151,9 +151,9 @@ TEST_F(TestSingleAntennaGPSPlugin, testFixWarnTrackAngleOK)
 {
   gga_frame.numberSatellitesUsedToComputeFix = 5;
   check(
-    romea::DiagnosticStatus::WARN,
-    romea::DiagnosticStatus::OK,
-    romea::DiagnosticStatus::OK);
+    romea::core::DiagnosticStatus::WARN,
+    romea::core::DiagnosticStatus::OK,
+    romea::core::DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
@@ -161,9 +161,9 @@ TEST_F(TestSingleAntennaGPSPlugin, testFixErrorTrackAngleOK)
 {
   gga_frame.fixQuality.reset();
   check(
-    romea::DiagnosticStatus::ERROR,
-    romea::DiagnosticStatus::OK,
-    romea::DiagnosticStatus::OK);
+    romea::core::DiagnosticStatus::ERROR,
+    romea::core::DiagnosticStatus::OK,
+    romea::core::DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
@@ -171,9 +171,9 @@ TEST_F(TestSingleAntennaGPSPlugin, testCannotComputeCourseBecauseLinearSpeedIsMi
 {
   linear_speed = std::numeric_limits<double>::quiet_NaN();
   check(
-    romea::DiagnosticStatus::OK,
-    romea::DiagnosticStatus::OK,
-    romea::DiagnosticStatus::ERROR);
+    romea::core::DiagnosticStatus::OK,
+    romea::core::DiagnosticStatus::OK,
+    romea::core::DiagnosticStatus::ERROR);
 }
 
 

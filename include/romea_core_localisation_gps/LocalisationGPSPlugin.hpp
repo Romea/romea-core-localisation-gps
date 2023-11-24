@@ -35,6 +35,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class LocalisationGPSPluginBase
 {
@@ -122,6 +124,7 @@ private:
   CheckupHDTTrackAngle hdtTrackAngleDiagnostic_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION_GPS__LOCALISATIONGPSPLUGIN_HPP_
