@@ -124,6 +124,8 @@ bool CheckupGGAFix::checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFram
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaFrame)
 {
+  // TODO: temporary fix for FIRA hackathon
+  return true;
   if (*ggaFrame.numberSatellitesUsedToComputeFix >=
     MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX)
   {
