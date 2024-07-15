@@ -18,6 +18,7 @@
 #include <utility>
 #include <string>
 #include <limits>
+#include <memory>
 
 // local
 #include "romea_core_localisation_gps/LocalisationGPSPlugin.hpp"
