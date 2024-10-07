@@ -1,3 +1,3 @@
 ## Romea Core Localisation GPS Library
 
-This library provides a plugin that transforms data from an Inertial Measurement Unit (IMU) into a Bayesian observation, enabling seamless integration with the localization algorithms in the **romea_core_localisation** library. Additionally, it includes monitoring tools to track GPS data and generate diagnostic reports, helping to detect and troubleshoot potential issues in real-time.
+This library provides a plugin that transforms data from an GPS receiver into a Bayesian observation, enabling seamless integration with the localization algorithms in the **romea_core_localisation** library. Additionally, it includes monitoring tools to track GPS data and generate diagnostic reports, helping to detect and troubleshoot potential issues in real-time.
