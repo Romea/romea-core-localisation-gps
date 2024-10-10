@@ -34,7 +34,7 @@ Project Title is released under the Apache License 2.0. See the LICENSE file for
 
 ## **Authors**
 
-The Romea Core Localization library, written by **Jean Laneurit**, was developed suring ANR Baudet Rob 2 project. Several individuals contributed scientifically to the development of this library:
+The Romea Core Localization GPS library, written by **Jean Laneurit**, was developed during ANR Baudet Rob 2 project. Several individuals contributed scientifically to the development of this library:
 
 **Jean Laneurit**  
 **Christophe Debain**  
@@ -43,4 +43,4 @@ The Romea Core Localization library, written by **Jean Laneurit**, was developed
 
 ## **Contact**
 
-If you have any questions or comments about Romea Core Localisation library, please contact **[Jean Laneurit](mailto:jean.laneurit@inrae.fr)**.
+If you have any questions or comments about Romea Core Localisation GPS library, please contact **[Jean Laneurit](mailto:jean.laneurit@inrae.fr)**.
