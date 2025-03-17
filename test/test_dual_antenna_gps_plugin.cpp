@@ -24,11 +24,13 @@
 
 // romea
 #include "helper.hpp"
-#include "romea_core_localisation_gps/LocalisationGPSPlugin.hpp"
+#include "romea_core_localisation_gps/gps_plugin.hpp"
 
-bool boolean(const romea::core::DiagnosticStatus & status)
+using namespace romea::core;  // NOLINT
+
+bool boolean(const DiagnosticStatus & status)
 {
-  return status == romea::core::DiagnosticStatus::OK;
+  return status == DiagnosticStatus::OK;
 }
 
 class TestDualAntennaGPSPlugin : public ::testing::Test
@@ -46,88 +48,88 @@ public:
 
   void SetUp() override
   {
-    auto gps = std::make_unique<romea::core::GPSReceiver>();
+    auto gps = std::make_unique<GPSReceiver>();
     gps->setAntennaBodyPosition(Eigen::Vector3d(0.3, 0, 2.));
 
-    gps_plugin = std::make_unique<romea::core::LocalisationDualAntennaGPSPlugin>(
-      std::move(gps), romea::core::FixQuality::RTK_FIX);
+    gps_plugin = std::make_unique<localisation::DualAntennaGPSPlugin>(
+      std::move(gps), FixQuality::RTK_FIX);
   }
 
 
-  const romea::core::Diagnostic & diagnostic(const size_t & index)
+  const Diagnostic & diagnostic(const size_t & index)
   {
     return *std::next(std::cbegin(report.diagnostics), index);
   }
 
 
   void check(
-    const romea::core::DiagnosticStatus & finalFixStatus,
-    const romea::core::DiagnosticStatus & finalTrackStatus)
+    const DiagnosticStatus & finalFixStatus,
+    const DiagnosticStatus & finalTrackStatus)
   {
     std::string gga_sentence = gga_frame.toNMEA();
     std::string hdt_sentence = hdt_frame.toNMEA();
 
     for (size_t n = 0; n < 4; ++n) {
-      romea::core::Duration stamp = romea::core::durationFromSecond(0.5 + n / 10.);
-      EXPECT_FALSE(gps_plugin->processGGA(stamp, gga_sentence, position));
-      EXPECT_FALSE(gps_plugin->processHDT(stamp, hdt_sentence, course));
-      report = gps_plugin->makeDiagnosticReport(stamp);
+      Duration stamp = durationFromSecond(0.5 + n / 10.);
+      EXPECT_FALSE(gps_plugin->process_gga(stamp, gga_sentence, position));
+      EXPECT_FALSE(gps_plugin->process_hdt(stamp, hdt_sentence, course));
+      report = gps_plugin->make_diagnostic_report(stamp);
 
       EXPECT_EQ(report.diagnostics.size(), 2);
       // EXPECT_EQ(
       //   diagnostic(0).status, std::isfinite(
       //     linear_speed) ? romea::DiagnosticStatus::OK : romea::DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(0).status, romea::core::DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(1).status, romea::core::DiagnosticStatus::ERROR);
+      EXPECT_EQ(diagnostic(0).status, DiagnosticStatus::ERROR);
+      EXPECT_EQ(diagnostic(1).status, DiagnosticStatus::ERROR);
     }
 
-    romea::core::Duration stamp = romea::core::durationFromSecond(0.5);
-    EXPECT_EQ(gps_plugin->processGGA(stamp, gga_sentence, position), boolean(finalFixStatus));
-    EXPECT_EQ(gps_plugin->processHDT(stamp, hdt_sentence, course), boolean(finalTrackStatus));
-    report = gps_plugin->makeDiagnosticReport(stamp);
-    EXPECT_EQ(diagnostic(0).status, romea::core::DiagnosticStatus::OK);
+    Duration stamp = durationFromSecond(0.5);
+    EXPECT_EQ(gps_plugin->process_gga(stamp, gga_sentence, position), boolean(finalFixStatus));
+    EXPECT_EQ(gps_plugin->process_hdt(stamp, hdt_sentence, course), boolean(finalTrackStatus));
+    report = gps_plugin->make_diagnostic_report(stamp);
+    EXPECT_EQ(diagnostic(0).status, DiagnosticStatus::OK);
     EXPECT_EQ(diagnostic(1).status, finalFixStatus);
-    EXPECT_EQ(diagnostic(2).status, romea::core::DiagnosticStatus::OK);
+    EXPECT_EQ(diagnostic(2).status, DiagnosticStatus::OK);
     EXPECT_EQ(diagnostic(3).status, finalTrackStatus);
   }
 
-  romea::core::Duration stamp;
-  romea::core::GGAFrame gga_frame;
-  romea::core::HDTFrame hdt_frame;
+  Duration stamp;
+  GGAFrame gga_frame;
+  HDTFrame hdt_frame;
 
-  romea::core::ObservationCourse course;
-  romea::core::ObservationPosition position;
-  std::unique_ptr<romea::core::LocalisationDualAntennaGPSPlugin> gps_plugin;
+  localisation::ObservationCourse course;
+  localisation::ObservationPosition position;
+  std::unique_ptr<localisation::DualAntennaGPSPlugin> gps_plugin;
 
-  romea::core::DiagnosticReport report;
+  DiagnosticReport report;
 };
 
 
 //-----------------------------------------------------------------------------
 TEST_F(TestDualAntennaGPSPlugin, testAllOk)
 {
-  check(romea::core::DiagnosticStatus::OK, romea::core::DiagnosticStatus::OK);
+  check(DiagnosticStatus::OK, DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestDualAntennaGPSPlugin, testFixOKTrakAngleError)
 {
   hdt_frame.heading.reset();
-  check(romea::core::DiagnosticStatus::OK, romea::core::DiagnosticStatus::ERROR);
+  check(DiagnosticStatus::OK, DiagnosticStatus::ERROR);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestDualAntennaGPSPlugin, testFixWarnTrackAngleOK)
 {
   gga_frame.numberSatellitesUsedToComputeFix = 5;
-  check(romea::core::DiagnosticStatus::WARN, romea::core::DiagnosticStatus::OK);
+  check(DiagnosticStatus::WARN, DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestDualAntennaGPSPlugin, testFixErrorTrackAngleOK)
 {
   gga_frame.fixQuality.reset();
-  check(romea::core::DiagnosticStatus::ERROR, romea::core::DiagnosticStatus::OK);
+  check(DiagnosticStatus::ERROR, DiagnosticStatus::OK);
 }
 
 

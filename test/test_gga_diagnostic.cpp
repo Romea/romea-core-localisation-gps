@@ -21,35 +21,37 @@
 
 // romea
 #include "helper.hpp"
-#include "romea_core_localisation_gps/CheckupGGAFix.hpp"
+#include "romea_core_localisation_gps/checkup_gga_fix.hpp"
+
+using namespace romea::core; // NOLINT
 
 class TestGGAFixDiagnostic : public ::testing::Test
 {
 public:
   TestGGAFixDiagnostic()
   : frame(minimalGoodGGAFrame()),
-    diagnostic(romea::core::FixQuality::RTK_FIX)
+    diagnostic(FixQuality::RTK_FIX)
   {
   }
 
-  romea::core::GGAFrame frame;
-  romea::core::CheckupGGAFix diagnostic;
+  GGAFrame frame;
+  localisation::CheckupGGAFix diagnostic;
 };
 
 //-----------------------------------------------------------------------------
 TEST_F(TestGGAFixDiagnostic, checkEmptyReport)
 {
-  EXPECT_TRUE(diagnostic.getReport().diagnostics.empty());
-  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("longitude").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("latitude").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("geoid_height").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("altitude_above_geoid").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("hdop").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("number_of_satellites").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("correction_age").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("base_station_id").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("fix_quality").c_str(), "");
+  EXPECT_TRUE(diagnostic.get_report().diagnostics.empty());
+  EXPECT_STREQ(diagnostic.get_report().info.at("talker").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("longitude").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("latitude").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("geoid_height").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("altitude_above_geoid").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("hdop").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("number_of_satellites").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("correction_age").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("base_station_id").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("fix_quality").c_str(), "");
 }
 
 //-----------------------------------------------------------------------------
@@ -57,61 +59,59 @@ TEST_F(TestGGAFixDiagnostic, checkEmptyReportAfterReset)
 {
   diagnostic.evaluate(frame);
   diagnostic.reset();
-  EXPECT_TRUE(diagnostic.getReport().diagnostics.empty());
-  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("longitude").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("latitude").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("geoid_height").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("altitude_above_geoid").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("hdop").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("number_of_satellites").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("correction_age").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("base_station_id").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("fix_quality").c_str(), "");
+  EXPECT_TRUE(diagnostic.get_report().diagnostics.empty());
+  EXPECT_STREQ(diagnostic.get_report().info.at("talker").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("longitude").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("latitude").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("geoid_height").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("altitude_above_geoid").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("hdop").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("number_of_satellites").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("correction_age").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("base_station_id").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("fix_quality").c_str(), "");
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestGGAFixDiagnostic, checkMinimalGoodFrame)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::OK);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::OK);
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(), "GGA fix OK.");
-  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "GNSS");
-  EXPECT_STREQ(diagnostic.getReport().info.at("longitude").c_str(), "0.03");
-  EXPECT_STREQ(diagnostic.getReport().info.at("latitude").c_str(), "0.7854");
-  EXPECT_STREQ(diagnostic.getReport().info.at("geoid_height").c_str(), "400.8");
-  EXPECT_STREQ(diagnostic.getReport().info.at("altitude_above_geoid").c_str(), "53.3");
-  EXPECT_STREQ(diagnostic.getReport().info.at("hdop").c_str(), "1.2");
-  EXPECT_STREQ(diagnostic.getReport().info.at("number_of_satellites").c_str(), "12");
-  EXPECT_STREQ(diagnostic.getReport().info.at("correction_age").c_str(), "2.5");
-  EXPECT_STREQ(diagnostic.getReport().info.at("base_station_id").c_str(), "1");
-  EXPECT_STREQ(diagnostic.getReport().info.at("fix_quality").c_str(), "rtk fix (4)");
+  EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::OK);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::OK);
+  EXPECT_STREQ(diagnostic.get_report().diagnostics.front().message.c_str(), "GGA fix OK.");
+  EXPECT_STREQ(diagnostic.get_report().info.at("talker").c_str(), "GNSS");
+  EXPECT_STREQ(diagnostic.get_report().info.at("longitude").c_str(), "0.03");
+  EXPECT_STREQ(diagnostic.get_report().info.at("latitude").c_str(), "0.7854");
+  EXPECT_STREQ(diagnostic.get_report().info.at("geoid_height").c_str(), "400.8");
+  EXPECT_STREQ(diagnostic.get_report().info.at("altitude_above_geoid").c_str(), "53.3");
+  EXPECT_STREQ(diagnostic.get_report().info.at("hdop").c_str(), "1.2");
+  EXPECT_STREQ(diagnostic.get_report().info.at("number_of_satellites").c_str(), "12");
+  EXPECT_STREQ(diagnostic.get_report().info.at("correction_age").c_str(), "2.5");
+  EXPECT_STREQ(diagnostic.get_report().info.at("base_station_id").c_str(), "1");
+  EXPECT_STREQ(diagnostic.get_report().info.at("fix_quality").c_str(), "rtk fix (4)");
 }
 
 //-----------------------------------------------------------------------------
 void checkMissingData(
-  romea::core::CheckupGGAFix & diagnostic,
-  const romea::core::GGAFrame & frame,
+  localisation::CheckupGGAFix & diagnostic,
+  const GGAFrame & frame,
   const std::string & missingDataName)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::ERROR);
-  EXPECT_EQ(
-    diagnostic.getReport().diagnostics.front().status,
-    romea::core::DiagnosticStatus::ERROR);
+  EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::ERROR);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::ERROR);
   EXPECT_STREQ(
-    diagnostic.getReport().diagnostics.front().message.c_str(), "GGA fix is incomplete.");
-  EXPECT_STREQ(diagnostic.getReport().info.at(missingDataName).c_str(), "");
+    diagnostic.get_report().diagnostics.front().message.c_str(), "GGA fix is incomplete.");
+  EXPECT_STREQ(diagnostic.get_report().info.at(missingDataName).c_str(), "");
 }
 
 //-----------------------------------------------------------------------------
 void checkUnreliableData(
-  romea::core::CheckupGGAFix & diagnostic,
-  const romea::core::GGAFrame & frame,
+  localisation::CheckupGGAFix & diagnostic,
+  const GGAFrame & frame,
   const std::string & message)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::WARN);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::WARN);
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(), message.c_str());
+  EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::WARN);
+  EXPECT_STREQ(diagnostic.get_report().diagnostics.front().message.c_str(), message.c_str());
 }
 
 //-----------------------------------------------------------------------------
@@ -180,25 +180,25 @@ TEST_F(TestGGAFixDiagnostic, unreliableHDOP)
 //-----------------------------------------------------------------------------
 TEST_F(TestGGAFixDiagnostic, unreliableFixQuality)
 {
-  frame.fixQuality = romea::core::FixQuality::DGPS_FIX;
+  frame.fixQuality = FixQuality::DGPS_FIX;
   checkUnreliableData(diagnostic, frame, "Fix quality is too low.");
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestGGAFixDiagnostic, severalUnreliableData)
 {
-  frame.fixQuality = romea::core::FixQuality::FLOAT_RTK_FIX;
+  frame.fixQuality = FixQuality::FLOAT_RTK_FIX;
   frame.horizontalDilutionOfPrecision = 5.2;
 
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::WARN);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::WARN);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.back().status, romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.back().status, DiagnosticStatus::WARN);
 
   EXPECT_STREQ(
-    diagnostic.getReport().diagnostics.front().message.c_str(),
+    diagnostic.get_report().diagnostics.front().message.c_str(),
     "HDOP is two high.");
   EXPECT_STREQ(
-    diagnostic.getReport().diagnostics.back().message.c_str(),
+    diagnostic.get_report().diagnostics.back().message.c_str(),
     "Fix quality is too low.");
 }
 

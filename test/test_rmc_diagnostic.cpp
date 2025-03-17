@@ -21,7 +21,9 @@
 
 // romea
 #include "helper.hpp"
-#include "romea_core_localisation_gps/CheckupRMCTrackAngle.hpp"
+#include "romea_core_localisation_gps/checkup_rmc_track_angle.hpp"
+
+using namespace romea::core; // NOLINT
 
 class TestRMCTrackAngleDiagnostic : public ::testing::Test
 {
@@ -32,19 +34,19 @@ public:
   {
   }
 
-  romea::core::RMCFrame frame;
-  romea::core::CheckupRMCTrackAngle diagnostic;
+  RMCFrame frame;
+  localisation::CheckupRMCTrackAngle diagnostic;
 };
 
 
 //-----------------------------------------------------------------------------
 TEST_F(TestRMCTrackAngleDiagnostic, checkEmptyReport)
 {
-  EXPECT_TRUE(diagnostic.getReport().diagnostics.empty());
-  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("speed_over_ground").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("track_angle").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("magnetic_deviation").c_str(), "");
+  EXPECT_TRUE(diagnostic.get_report().diagnostics.empty());
+  EXPECT_STREQ(diagnostic.get_report().info.at("talker").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("speed_over_ground").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("track_angle").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("magnetic_deviation").c_str(), "");
 }
 
 //-----------------------------------------------------------------------------
@@ -52,38 +54,38 @@ TEST_F(TestRMCTrackAngleDiagnostic, checkEmptyReportAfterReset)
 {
   diagnostic.evaluate(frame);
   diagnostic.reset();
-  EXPECT_TRUE(diagnostic.getReport().diagnostics.empty());
-  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("speed_over_ground").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("track_angle").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("magnetic_deviation").c_str(), "");
+  EXPECT_TRUE(diagnostic.get_report().diagnostics.empty());
+  EXPECT_STREQ(diagnostic.get_report().info.at("talker").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("speed_over_ground").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("track_angle").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("magnetic_deviation").c_str(), "");
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestRMCTrackAngleDiagnostic, checkMinimalGoodFrame)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::OK);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::OK);
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(), "RMC track angle OK.");
-  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "NAVSTAR");
-  EXPECT_STREQ(diagnostic.getReport().info.at("speed_over_ground").c_str(), "3.2");
-  EXPECT_STREQ(diagnostic.getReport().info.at("track_angle").c_str(), "1.54");
-  EXPECT_STREQ(diagnostic.getReport().info.at("magnetic_deviation").c_str(), "0.0378");
+  EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::OK);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::OK);
+  EXPECT_STREQ(diagnostic.get_report().diagnostics.front().message.c_str(), "RMC track angle OK.");
+  EXPECT_STREQ(diagnostic.get_report().info.at("talker").c_str(), "NAVSTAR");
+  EXPECT_STREQ(diagnostic.get_report().info.at("speed_over_ground").c_str(), "3.2");
+  EXPECT_STREQ(diagnostic.get_report().info.at("track_angle").c_str(), "1.54");
+  EXPECT_STREQ(diagnostic.get_report().info.at("magnetic_deviation").c_str(), "0.0378");
 }
 
 //-----------------------------------------------------------------------------
 void checkMissingData(
-  romea::core::CheckupRMCTrackAngle & diagnostic,
-  const romea::core::RMCFrame & frame,
+  localisation::CheckupRMCTrackAngle & diagnostic,
+  const RMCFrame & frame,
   const std::string & missingDataName)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::ERROR);
+  EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::ERROR);
   EXPECT_EQ(
-    diagnostic.getReport().diagnostics.front().status,
-    romea::core::DiagnosticStatus::ERROR);
-  EXPECT_STREQ(diagnostic.getReport().info.at(missingDataName).c_str(), "");
+    diagnostic.get_report().diagnostics.front().status,
+    DiagnosticStatus::ERROR);
+  EXPECT_STREQ(diagnostic.get_report().info.at(missingDataName).c_str(), "");
   EXPECT_STREQ(
-    diagnostic.getReport().diagnostics.front().message.c_str(),
+    diagnostic.get_report().diagnostics.front().message.c_str(),
     "RMC track angle is incomplete.");
 }
 
@@ -105,10 +107,10 @@ TEST_F(TestRMCTrackAngleDiagnostic, checkMissingTrackAngle)
 TEST_F(TestRMCTrackAngleDiagnostic, checkUnreliableTrackAngle)
 {
   frame.speedOverGroundInMeterPerSecond = 0.5;
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::WARN);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::WARN);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::WARN);
   EXPECT_STREQ(
-    diagnostic.getReport().diagnostics.front().message.c_str(),
+    diagnostic.get_report().diagnostics.front().message.c_str(),
     "RMC track angle is not reliable because vehicle speed is lower than 1 m/s.");
 }
 

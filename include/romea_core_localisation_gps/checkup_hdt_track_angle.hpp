@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef ROMEA_CORE_LOCALISATION_GPS__CHECKUPHDTTRACKANGLE_HPP_
-#define ROMEA_CORE_LOCALISATION_GPS__CHECKUPHDTTRACKANGLE_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_GPS__CHECKUP_HDT_TRACK_ANGLE_HPP_
+#define ROMEA_CORE_LOCALISATION_GPS__CHECKUP_HDT_TRACK_ANGLE_HPP_
 
 
 // std
@@ -30,32 +30,35 @@ namespace romea
 {
 namespace core
 {
+namespace localisation
+{
 
 class CheckupHDTTrackAngle
 {
 public:
   CheckupHDTTrackAngle();
 
-  DiagnosticStatus evaluate(const HDTFrame & hdtFrame);
+  DiagnosticStatus evaluate(const HDTFrame & hdt_frame);
 
-  const DiagnosticReport & getReport()const;
+  const DiagnosticReport & get_report()const;
 
   void reset();
 
 private:
-  bool checkFrameIsComplete_(const HDTFrame & rmcFrame);
+  bool check_frame_is_complete_(const HDTFrame & hdt_frame);
 
-  void declareReportInfos_();
-  void setReportInfos_(const HDTFrame & rmcFrame);
-  void setDiagnostic_(const DiagnosticStatus & status, const std::string & message);
+  void declare_report_infos_();
+  void set_report_infos_(const HDTFrame & hdt_frame);
+  void set_diagnostic_(const DiagnosticStatus & status, const std::string & message);
 
 private:
   mutable std::mutex mutex_;
   DiagnosticReport report_;
 };
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea
 
 
-#endif  // ROMEA_CORE_LOCALISATION_GPS__CHECKUPHDTTRACKANGLE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_GPS__CHECKUP_HDT_TRACK_ANGLE_HPP_

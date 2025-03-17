@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef  ROMEA_CORE_LOCALISATION_GPS__CHECKUPGGAFIX_HPP_
-#define  ROMEA_CORE_LOCALISATION_GPS__CHECKUPGGAFIX_HPP_
+#ifndef  ROMEA_CORE_LOCALISATION_GPS__CHECKUP_GGA_FIX_HPP_
+#define  ROMEA_CORE_LOCALISATION_GPS__CHECKUP_GGA_FIX_HPP_
 
 // std
 #include <list>
@@ -30,38 +30,41 @@ namespace romea
 {
 namespace core
 {
+namespace localisation
+{
 
 class CheckupGGAFix
 {
 public:
-  explicit CheckupGGAFix(const FixQuality & minimalFixQuality);
+  explicit CheckupGGAFix(const FixQuality & minimal_fix_quality);
 
-  DiagnosticStatus evaluate(const GGAFrame & ggaFrame);
+  DiagnosticStatus evaluate(const GGAFrame & gga_frame);
 
-  const DiagnosticReport & getReport()const;
+  const DiagnosticReport & get_report()const;
 
   void reset();
 
 private:
-  void declareReportInfos_();
-  void setReportInfos_(const GGAFrame & ggaFrame);
-  void addDiagnostic_(const DiagnosticStatus & status, const std::string & message);
+  void declare_report_infos_();
+  void set_report_infos_(const GGAFrame & gga_frame);
+  void add_diagnostic_(const DiagnosticStatus & status, const std::string & message);
 
-  bool checkFrameIsComplete_(const GGAFrame & ggaFrame);
-  void checkFixIsReliable_(const GGAFrame & ggaFrame);
-  bool checkFixQuality_(const GGAFrame & ggaFrame);
-  bool checkHorizontalDilutionOfPrecision_(const GGAFrame & ggaFrame);
-  bool checkNumberSatellitesUsedToComputeFix_(const GGAFrame & ggaFrame);
+  bool check_frame_is_complete_(const GGAFrame & gga_frame);
+  void check_fix_is_reliable_(const GGAFrame & gga_frame);
+  bool check_fix_quality_(const GGAFrame & gga_frame);
+  bool check_horizontal_dilution_of_precision_(const GGAFrame & gga_frame);
+  bool check_number_satellites_used_to_compute_fix_(const GGAFrame & gga_frame);
 
 private:
-  FixQuality minimalFixQuality_;
-  double maximalHorizontalDilutionOfPrecision_;
+  FixQuality minimal_fix_quality_;
+  double maximalHorizontal_dilution_of_precision_;
 
   mutable std::mutex mutex_;
   DiagnosticReport report_;
 };
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_GPS__CHECKUPGGAFIX_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_GPS__CHECKUP_GGA_FIX_HPP_

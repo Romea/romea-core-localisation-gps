@@ -18,79 +18,81 @@
 #include <string>
 
 // local
-#include "romea_core_localisation_gps/CheckupRMCTrackAngle.hpp"
+#include "romea_core_localisation_gps/checkup_rmc_track_angle.hpp"
 
 namespace romea
 {
 namespace core
 {
+namespace localisation
+{
 
 //-----------------------------------------------------------------------------
-CheckupRMCTrackAngle::CheckupRMCTrackAngle(const double & minimalSpeedOverGround)
-: minimalSpeedOverGround_(minimalSpeedOverGround),
+CheckupRMCTrackAngle::CheckupRMCTrackAngle(const double & minimal_speed_over_ground)
+: minimal_speed_over_ground_(minimal_speed_over_ground),
   mutex_(),
   report_()
 {
-  declareReportInfos_();
+  declare_report_infos_();
 }
 
 
 //-----------------------------------------------------------------------------
-DiagnosticStatus CheckupRMCTrackAngle::evaluate(const RMCFrame & rmcFrame)
+DiagnosticStatus CheckupRMCTrackAngle::evaluate(const RMCFrame & rmc_frame)
 {
   std::lock_guard<std::mutex> lock(mutex_);
-  if (checkFrameIsComplete_(rmcFrame)) {
-    checkFixIsReliable_(rmcFrame);
+  if (check_frame_is_complete_(rmc_frame)) {
+    check_fix_is_reliable_(rmc_frame);
   }
-  setReportInfos_(rmcFrame);
+  set_report_infos_(rmc_frame);
   return report_.diagnostics.front().status;
 }
 
 //-----------------------------------------------------------------------------
-void CheckupRMCTrackAngle::checkFixIsReliable_(const RMCFrame & rmcFrame)
+void CheckupRMCTrackAngle::check_fix_is_reliable_(const RMCFrame & rmc_frame)
 {
-  if (*rmcFrame.speedOverGroundInMeterPerSecond < minimalSpeedOverGround_) {
+  if (*rmc_frame.speedOverGroundInMeterPerSecond < minimal_speed_over_ground_) {
     std::stringstream msg;
     msg << "RMC track angle is not reliable ";
     msg << "because vehicle speed is lower than ";
-    msg << minimalSpeedOverGround_ << " m/s.";
-    setDiagnostic_(DiagnosticStatus::WARN, msg.str());
+    msg << minimal_speed_over_ground_ << " m/s.";
+    set_diagnostic_(DiagnosticStatus::WARN, msg.str());
   } else {
-    setDiagnostic_(DiagnosticStatus::OK, "RMC track angle OK.");
+    set_diagnostic_(DiagnosticStatus::OK, "RMC track angle OK.");
   }
 }
 
 //-----------------------------------------------------------------------------
-const DiagnosticReport & CheckupRMCTrackAngle::getReport() const
+const DiagnosticReport & CheckupRMCTrackAngle::get_report() const
 {
   std::lock_guard<std::mutex> lock(mutex_);
   return report_;
 }
 
 //-----------------------------------------------------------------------------
-bool CheckupRMCTrackAngle::checkFrameIsComplete_(const RMCFrame & rmcFrame)
+bool CheckupRMCTrackAngle::check_frame_is_complete_(const RMCFrame & rmc_frame)
 {
-  if (rmcFrame.speedOverGroundInMeterPerSecond &&
-    rmcFrame.trackAngleTrue)
+  if (rmc_frame.speedOverGroundInMeterPerSecond &&
+    rmc_frame.trackAngleTrue)
   {
     return true;
   } else {
-    setDiagnostic_(DiagnosticStatus::ERROR, "RMC track angle is incomplete.");
+    set_diagnostic_(DiagnosticStatus::ERROR, "RMC track angle is incomplete.");
     return false;
   }
 }
 
 //-----------------------------------------------------------------------------
-void CheckupRMCTrackAngle::setReportInfos_(const RMCFrame & rmcFrame)
+void CheckupRMCTrackAngle::set_report_infos_(const RMCFrame & rmc_frame)
 {
-  setReportInfo(report_, "talker", rmcFrame.talkerId);
-  setReportInfo(report_, "speed_over_ground", rmcFrame.speedOverGroundInMeterPerSecond);
-  setReportInfo(report_, "track_angle", rmcFrame.trackAngleTrue);
-  setReportInfo(report_, "magnetic_deviation", rmcFrame.magneticDeviation);
+  setReportInfo(report_, "talker", rmc_frame.talkerId);
+  setReportInfo(report_, "speed_over_ground", rmc_frame.speedOverGroundInMeterPerSecond);
+  setReportInfo(report_, "track_angle", rmc_frame.trackAngleTrue);
+  setReportInfo(report_, "magnetic_deviation", rmc_frame.magneticDeviation);
 }
 
 //-----------------------------------------------------------------------------
-void CheckupRMCTrackAngle::setDiagnostic_(
+void CheckupRMCTrackAngle::set_diagnostic_(
   const DiagnosticStatus & status,
   const std::string & message)
 {
@@ -99,7 +101,7 @@ void CheckupRMCTrackAngle::setDiagnostic_(
 }
 
 //-----------------------------------------------------------------------------
-void CheckupRMCTrackAngle::declareReportInfos_()
+void CheckupRMCTrackAngle::declare_report_infos_()
 {
   setReportInfo(report_, "talker", "");
   setReportInfo(report_, "speed_over_ground", "");
@@ -112,8 +114,9 @@ void CheckupRMCTrackAngle::reset()
 {
   std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
-  declareReportInfos_();
+  declare_report_infos_();
 }
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea

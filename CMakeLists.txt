@@ -12,10 +12,10 @@ find_package(romea_core_gps REQUIRED)
 find_package(romea_core_localisation REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
-  src/CheckupGGAFix.cpp
-  src/CheckupRMCTrackAngle.cpp
-  src/CheckupHDTTrackAngle.cpp
-  src/LocalisationGPSPlugin.cpp)
+  src/checkup_gga_fix.cpp
+  src/checkup_rmc_track_angle.cpp
+  src/checkup_hdt_track_angle.cpp
+  src/gps_plugin.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

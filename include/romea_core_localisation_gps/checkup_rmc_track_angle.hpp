@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef ROMEA_CORE_LOCALISATION_GPS__CHECKUPRMCTRACKANGLE_HPP_
-#define ROMEA_CORE_LOCALISATION_GPS__CHECKUPRMCTRACKANGLE_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_GPS__CHECKUP_RMC_TRACK_ANGLE_HPP_
+#define ROMEA_CORE_LOCALISATION_GPS__CHECKUP_RMC_TRACK_ANGLE_HPP_
 
 // std
 #include <mutex>
@@ -28,35 +28,38 @@ namespace romea
 {
 namespace core
 {
+namespace localisation
+{
 
 class CheckupRMCTrackAngle
 {
 public:
   explicit CheckupRMCTrackAngle(const double & minimalSpeedOverGround);
 
-  DiagnosticStatus evaluate(const RMCFrame & rmcFrame);
+  DiagnosticStatus evaluate(const RMCFrame & rmc_frame);
 
-  const DiagnosticReport & getReport()const;
+  const DiagnosticReport & get_report()const;
 
   void reset();
 
 private:
-  bool checkFrameIsComplete_(const RMCFrame & rmcFrame);
-  void checkFixIsReliable_(const RMCFrame & rmcFrame);
+  bool check_frame_is_complete_(const RMCFrame & rmc_frame);
+  void check_fix_is_reliable_(const RMCFrame & rmc_frame);
 
-  void declareReportInfos_();
-  void setReportInfos_(const RMCFrame & rmcFrame);
-  void setDiagnostic_(const DiagnosticStatus & status, const std::string & message);
+  void declare_report_infos_();
+  void set_report_infos_(const RMCFrame & rmcFrame);
+  void set_diagnostic_(const DiagnosticStatus & status, const std::string & message);
 
 private:
-  double minimalSpeedOverGround_;
+  double minimal_speed_over_ground_;
 
   mutable std::mutex mutex_;
   DiagnosticReport report_;
 };
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea
 
 
-#endif  // ROMEA_CORE_LOCALISATION_GPS__CHECKUPRMCTRACKANGLE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_GPS__CHECKUP_RMC_TRACK_ANGLE_HPP_

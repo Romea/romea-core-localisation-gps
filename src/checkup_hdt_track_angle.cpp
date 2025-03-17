@@ -18,11 +18,13 @@
 #include <string>
 
 // local
-#include "romea_core_localisation_gps/CheckupHDTTrackAngle.hpp"
+#include "romea_core_localisation_gps/checkup_hdt_track_angle.hpp"
 
 namespace romea
 {
 namespace core
+{
+namespace localisation
 {
 
 //-----------------------------------------------------------------------------
@@ -30,47 +32,47 @@ CheckupHDTTrackAngle::CheckupHDTTrackAngle()
 : mutex_(),
   report_()
 {
-  declareReportInfos_();
+  declare_report_infos_();
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticStatus CheckupHDTTrackAngle::evaluate(const HDTFrame & hdtFrame)
+DiagnosticStatus CheckupHDTTrackAngle::evaluate(const HDTFrame & hdt_frame)
 {
   std::lock_guard<std::mutex> lock(mutex_);
-  checkFrameIsComplete_(hdtFrame);
+  check_frame_is_complete_(hdt_frame);
 
-  setReportInfos_(hdtFrame);
+  set_report_infos_(hdt_frame);
   return report_.diagnostics.front().status;
 }
 
 //-----------------------------------------------------------------------------
-const DiagnosticReport & CheckupHDTTrackAngle::getReport() const
+const DiagnosticReport & CheckupHDTTrackAngle::get_report() const
 {
   std::lock_guard<std::mutex> lock(mutex_);
   return report_;
 }
 
 //-----------------------------------------------------------------------------
-bool CheckupHDTTrackAngle::checkFrameIsComplete_(const HDTFrame & hdtFrame)
+bool CheckupHDTTrackAngle::check_frame_is_complete_(const HDTFrame & hdt_frame)
 {
-  if (hdtFrame.heading) {
-    setDiagnostic_(DiagnosticStatus::OK, "HDT track angle OK.");
+  if (hdt_frame.heading) {
+    set_diagnostic_(DiagnosticStatus::OK, "HDT track angle OK.");
     return true;
   } else {
-    setDiagnostic_(DiagnosticStatus::ERROR, "HDT track angle is incomplete.");
+    set_diagnostic_(DiagnosticStatus::ERROR, "HDT track angle is incomplete.");
     return false;
   }
 }
 
 //-----------------------------------------------------------------------------
-void CheckupHDTTrackAngle::setReportInfos_(const HDTFrame & hdtFrame)
+void CheckupHDTTrackAngle::set_report_infos_(const HDTFrame & hdt_frame)
 {
-  setReportInfo(report_, "talker", hdtFrame.talkerId);
-  setReportInfo(report_, "track_angle", hdtFrame.heading);
+  setReportInfo(report_, "talker", hdt_frame.talkerId);
+  setReportInfo(report_, "track_angle", hdt_frame.heading);
 }
 
 //-----------------------------------------------------------------------------
-void CheckupHDTTrackAngle::setDiagnostic_(
+void CheckupHDTTrackAngle::set_diagnostic_(
   const DiagnosticStatus & status,
   const std::string & message)
 {
@@ -79,7 +81,7 @@ void CheckupHDTTrackAngle::setDiagnostic_(
 }
 
 //-----------------------------------------------------------------------------
-void CheckupHDTTrackAngle::declareReportInfos_()
+void CheckupHDTTrackAngle::declare_report_infos_()
 {
   setReportInfo(report_, "talker", "");
   setReportInfo(report_, "track_angle", "");
@@ -90,8 +92,9 @@ void CheckupHDTTrackAngle::reset()
 {
   std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
-  declareReportInfos_();
+  declare_report_infos_();
 }
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea

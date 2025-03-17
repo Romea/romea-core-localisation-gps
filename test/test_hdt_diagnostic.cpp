@@ -21,7 +21,9 @@
 
 // romea
 #include "helper.hpp"
-#include "romea_core_localisation_gps/CheckupHDTTrackAngle.hpp"
+#include "romea_core_localisation_gps/checkup_hdt_track_angle.hpp"
+
+using namespace romea::core; // NOLINT
 
 class TestHDTTrackAngleDiagnostic : public ::testing::Test
 {
@@ -32,27 +34,27 @@ public:
   {
   }
 
-  romea::core::HDTFrame frame;
-  romea::core::CheckupHDTTrackAngle diagnostic;
+  HDTFrame frame;
+  localisation::CheckupHDTTrackAngle diagnostic;
 };
 
 
 //-----------------------------------------------------------------------------
 TEST_F(TestHDTTrackAngleDiagnostic, checkEmptyReport)
 {
-  EXPECT_TRUE(diagnostic.getReport().diagnostics.empty());
-  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("track_angle").c_str(), "");
+  EXPECT_TRUE(diagnostic.get_report().diagnostics.empty());
+  EXPECT_STREQ(diagnostic.get_report().info.at("talker").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("track_angle").c_str(), "");
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestHDTTrackAngleDiagnostic, checkMinimalGoodFrame)
 {
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::OK);
-  EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::core::DiagnosticStatus::OK);
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(), "HDT track angle OK.");
-  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "GLONASS");
-  EXPECT_STREQ(diagnostic.getReport().info.at("track_angle").c_str(), "0.378");
+  EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::OK);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::OK);
+  EXPECT_STREQ(diagnostic.get_report().diagnostics.front().message.c_str(), "HDT track angle OK.");
+  EXPECT_STREQ(diagnostic.get_report().info.at("talker").c_str(), "GLONASS");
+  EXPECT_STREQ(diagnostic.get_report().info.at("track_angle").c_str(), "0.378");
 }
 
 //-----------------------------------------------------------------------------
@@ -60,22 +62,22 @@ TEST_F(TestHDTTrackAngleDiagnostic, checkEmptyReportAfterReset)
 {
   diagnostic.evaluate(frame);
   diagnostic.reset();
-  EXPECT_TRUE(diagnostic.getReport().diagnostics.empty());
-  EXPECT_STREQ(diagnostic.getReport().info.at("talker").c_str(), "");
-  EXPECT_STREQ(diagnostic.getReport().info.at("track_angle").c_str(), "");
+  EXPECT_TRUE(diagnostic.get_report().diagnostics.empty());
+  EXPECT_STREQ(diagnostic.get_report().info.at("talker").c_str(), "");
+  EXPECT_STREQ(diagnostic.get_report().info.at("track_angle").c_str(), "");
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestHDTTrackAngleDiagnostic, checkMissingTrackAngle)
 {
   frame.heading.reset();
-  EXPECT_EQ(diagnostic.evaluate(frame), romea::core::DiagnosticStatus::ERROR);
+  EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::ERROR);
   EXPECT_EQ(
-    diagnostic.getReport().diagnostics.front().status,
-    romea::core::DiagnosticStatus::ERROR);
-  EXPECT_STREQ(diagnostic.getReport().info.at("track_angle").c_str(), "");
+    diagnostic.get_report().diagnostics.front().status,
+    DiagnosticStatus::ERROR);
+  EXPECT_STREQ(diagnostic.get_report().info.at("track_angle").c_str(), "");
   EXPECT_STREQ(
-    diagnostic.getReport().diagnostics.front().message.c_str(), "HDT track angle is incomplete.");
+    diagnostic.get_report().diagnostics.front().message.c_str(), "HDT track angle is incomplete.");
 }
 
 //-----------------------------------------------------------------------------
