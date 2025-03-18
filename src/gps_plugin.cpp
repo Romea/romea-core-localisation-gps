@@ -81,7 +81,7 @@ bool GPSPluginBase::process_gga(
     position_obs.Y(ObservationPosition::POSITION_X) = position.x();
     position_obs.Y(ObservationPosition::POSITION_Y) = position.y();
     position_obs.R() = Eigen::Matrix2d::Identity() * fixStd * fixStd;
-    position_obs.level_arm = gps_->getAntennaBodyPosition();
+    position_obs.lever_arm = gps_->getAntennaBodyPosition();
     return true;
   }
 
