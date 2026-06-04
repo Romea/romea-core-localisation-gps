@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
 // std
 #include <limits>
 #include <memory>
-#include <utility>
 #include <string>
+#include <utility>
 
 // romea
 #include "helper.hpp"
@@ -56,12 +55,10 @@ public:
       std::move(gps), FixQuality::RTK_FIX, 1.);
   }
 
-
   const Diagnostic & diagnostic(const size_t & index)
   {
     return *std::next(std::cbegin(report.diagnostics), index);
   }
-
 
   void check(
     const DiagnosticStatus & finalFixStatus,
@@ -70,7 +67,6 @@ public:
   {
     std::string gga_sentence = gga_frame.toNMEA();
     std::string rmc_sentence = rmc_frame.toNMEA();
-
 
     if (std::isfinite(linear_speed)) {
       for (size_t n = 0; n <= 20; ++n) {
@@ -87,8 +83,8 @@ public:
 
       EXPECT_EQ(report.diagnostics.size(), 3);
       EXPECT_EQ(
-        diagnostic(0).status, std::isfinite(linear_speed) ?
-        DiagnosticStatus::OK : DiagnosticStatus::ERROR);
+        diagnostic(0).status,
+        std::isfinite(linear_speed) ? DiagnosticStatus::OK : DiagnosticStatus::ERROR);
       EXPECT_EQ(diagnostic(1).status, DiagnosticStatus::ERROR);
       EXPECT_EQ(diagnostic(2).status, DiagnosticStatus::ERROR);
     }
@@ -118,66 +114,46 @@ public:
   DiagnosticReport report;
 };
 
-
 //-----------------------------------------------------------------------------
 TEST_F(TestSingleAntennaGPSPlugin, testAllOk)
 {
-  check(
-    DiagnosticStatus::OK,
-    DiagnosticStatus::OK,
-    DiagnosticStatus::OK);
+  check(DiagnosticStatus::OK, DiagnosticStatus::OK, DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestSingleAntennaGPSPlugin, testFixOKTrakAngleWarn)
 {
   rmc_frame.speedOverGroundInMeterPerSecond = 0.5;
-  check(
-    DiagnosticStatus::OK,
-    DiagnosticStatus::WARN,
-    DiagnosticStatus::OK);
+  check(DiagnosticStatus::OK, DiagnosticStatus::WARN, DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestSingleAntennaGPSPlugin, testFixOKTrakAngleError)
 {
   rmc_frame.trackAngleTrue.reset();
-  check(
-    DiagnosticStatus::OK,
-    DiagnosticStatus::ERROR,
-    DiagnosticStatus::OK);
+  check(DiagnosticStatus::OK, DiagnosticStatus::ERROR, DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestSingleAntennaGPSPlugin, testFixWarnTrackAngleOK)
 {
   gga_frame.numberSatellitesUsedToComputeFix = 5;
-  check(
-    DiagnosticStatus::WARN,
-    DiagnosticStatus::OK,
-    DiagnosticStatus::OK);
+  check(DiagnosticStatus::WARN, DiagnosticStatus::OK, DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestSingleAntennaGPSPlugin, testFixErrorTrackAngleOK)
 {
   gga_frame.fixQuality.reset();
-  check(
-    DiagnosticStatus::ERROR,
-    DiagnosticStatus::OK,
-    DiagnosticStatus::OK);
+  check(DiagnosticStatus::ERROR, DiagnosticStatus::OK, DiagnosticStatus::OK);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestSingleAntennaGPSPlugin, testCannotComputeCourseBecauseLinearSpeedIsMissing)
 {
   linear_speed = std::numeric_limits<double>::quiet_NaN();
-  check(
-    DiagnosticStatus::OK,
-    DiagnosticStatus::OK,
-    DiagnosticStatus::ERROR);
+  check(DiagnosticStatus::OK, DiagnosticStatus::OK, DiagnosticStatus::ERROR);
 }
-
 
 //-----------------------------------------------------------------------------
 int main(int argc, char ** argv)

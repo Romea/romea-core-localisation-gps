@@ -12,21 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION_GPS__GPS_PLUGIN_HPP_
 #define ROMEA_CORE_LOCALISATION_GPS__GPS_PLUGIN_HPP_
-
 
 // std
 #include <memory>
 #include <string>
 
 // romea core
-#include "romea_core_gps/GPSReceiver.hpp"
-#include "romea_core_common/geodesy/ENUConverter.hpp"
 #include "romea_core_common/diagnostic/CheckupRate.hpp"
-#include "romea_core_localisation/observation_position.hpp"
+#include "romea_core_common/geodesy/ENUConverter.hpp"
+#include "romea_core_gps/GPSReceiver.hpp"
 #include "romea_core_localisation/observation_course.hpp"
+#include "romea_core_localisation/observation_position.hpp"
 // local
 #include "checkup_gga_fix.hpp"
 #include "checkup_hdt_track_angle.hpp"
@@ -42,22 +40,18 @@ namespace localisation
 class GPSPluginBase
 {
 public:
-  GPSPluginBase(
-    std::unique_ptr<GPSReceiver> gps,
-    const FixQuality & minimalFixQuality);
+  GPSPluginBase(std::unique_ptr<GPSReceiver> gps, const FixQuality & minimalFixQuality);
 
   virtual ~GPSPluginBase() = default;
 
   void set_anchor(const GeodeticCoordinates & wgs84_anchor);
 
   bool process_gga(
-    const Duration & stamp,
-    const std::string & gga_sentence,
-    ObservationPosition & position_obs);
+    const Duration & stamp, const std::string & gga_sentence, ObservationPosition & position_obs);
 
   void process_gsv(const std::string & gsvSentence);
 
-  const ENUConverter & get_enu_converter()const;
+  const ENUConverter & get_enu_converter() const;
 
   DiagnosticReport make_diagnostic_report(const Duration & stamp);
 
@@ -73,7 +67,6 @@ protected:
   CheckupGGAFix gga_fix_diagnostic_;
 };
 
-
 class SingleAntennaGPSPlugin : public GPSPluginBase
 {
 public:
@@ -82,14 +75,10 @@ public:
     const FixQuality & minimal_fix_quality,
     const double & minimal_speed_over_ground);
 
-  void process_linear_speed(
-    const Duration & stamp,
-    const double & linear_speed);
+  void process_linear_speed(const Duration & stamp, const double & linear_speed);
 
   bool process_rmc(
-    const Duration & stamp,
-    const std::string & rmc_sentence,
-    ObservationCourse & course_obs);
+    const Duration & stamp, const std::string & rmc_sentence, ObservationCourse & course_obs);
 
 private:
   void check_heart_beats_(const Duration & stamp) override;
@@ -106,15 +95,10 @@ private:
 class DualAntennaGPSPlugin : public GPSPluginBase
 {
 public:
-  DualAntennaGPSPlugin(
-    std::unique_ptr<GPSReceiver> gps,
-    const FixQuality & minimalFixQuality);
-
+  DualAntennaGPSPlugin(std::unique_ptr<GPSReceiver> gps, const FixQuality & minimalFixQuality);
 
   bool process_hdt(
-    const Duration & stamp,
-    const std::string & hdt_sentence,
-    ObservationCourse & course_obs);
+    const Duration & stamp, const std::string & hdt_sentence, ObservationCourse & course_obs);
 
 private:
   void check_heart_beats_(const Duration & stamp) override;

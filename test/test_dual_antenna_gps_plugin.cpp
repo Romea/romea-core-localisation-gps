@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
 // std
 #include <limits>
 #include <memory>
-#include <utility>
 #include <string>
+#include <utility>
 
 // romea
 #include "helper.hpp"
@@ -51,20 +50,16 @@ public:
     auto gps = std::make_unique<GPSReceiver>();
     gps->setAntennaBodyPosition(Eigen::Vector3d(0.3, 0, 2.));
 
-    gps_plugin = std::make_unique<localisation::DualAntennaGPSPlugin>(
-      std::move(gps), FixQuality::RTK_FIX);
+    gps_plugin =
+      std::make_unique<localisation::DualAntennaGPSPlugin>(std::move(gps), FixQuality::RTK_FIX);
   }
-
 
   const Diagnostic & diagnostic(const size_t & index)
   {
     return *std::next(std::cbegin(report.diagnostics), index);
   }
 
-
-  void check(
-    const DiagnosticStatus & finalFixStatus,
-    const DiagnosticStatus & finalTrackStatus)
+  void check(const DiagnosticStatus & finalFixStatus, const DiagnosticStatus & finalTrackStatus)
   {
     std::string gga_sentence = gga_frame.toNMEA();
     std::string hdt_sentence = hdt_frame.toNMEA();
@@ -104,7 +99,6 @@ public:
   DiagnosticReport report;
 };
 
-
 //-----------------------------------------------------------------------------
 TEST_F(TestDualAntennaGPSPlugin, testAllOk)
 {
@@ -131,7 +125,6 @@ TEST_F(TestDualAntennaGPSPlugin, testFixErrorTrackAngleOK)
   gga_frame.fixQuality.reset();
   check(DiagnosticStatus::ERROR, DiagnosticStatus::OK);
 }
-
 
 //-----------------------------------------------------------------------------
 int main(int argc, char ** argv)

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
@@ -23,16 +22,12 @@
 #include "helper.hpp"
 #include "romea_core_localisation_gps/checkup_gga_fix.hpp"
 
-using namespace romea::core; // NOLINT
+using namespace romea::core;  // NOLINT
 
 class TestGGAFixDiagnostic : public ::testing::Test
 {
 public:
-  TestGGAFixDiagnostic()
-  : frame(minimalGoodGGAFrame()),
-    diagnostic(FixQuality::RTK_FIX)
-  {
-  }
+  TestGGAFixDiagnostic() : frame(minimalGoodGGAFrame()), diagnostic(FixQuality::RTK_FIX) {}
 
   GGAFrame frame;
   localisation::CheckupGGAFix diagnostic;
@@ -105,9 +100,7 @@ void checkMissingData(
 
 //-----------------------------------------------------------------------------
 void checkUnreliableData(
-  localisation::CheckupGGAFix & diagnostic,
-  const GGAFrame & frame,
-  const std::string & message)
+  localisation::CheckupGGAFix & diagnostic, const GGAFrame & frame, const std::string & message)
 {
   EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::WARN);
   EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::WARN);
@@ -194,14 +187,10 @@ TEST_F(TestGGAFixDiagnostic, severalUnreliableData)
   EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::WARN);
   EXPECT_EQ(diagnostic.get_report().diagnostics.back().status, DiagnosticStatus::WARN);
 
+  EXPECT_STREQ(diagnostic.get_report().diagnostics.front().message.c_str(), "HDOP is two high.");
   EXPECT_STREQ(
-    diagnostic.get_report().diagnostics.front().message.c_str(),
-    "HDOP is two high.");
-  EXPECT_STREQ(
-    diagnostic.get_report().diagnostics.back().message.c_str(),
-    "Fix quality is too low.");
+    diagnostic.get_report().diagnostics.back().message.c_str(), "Fix quality is too low.");
 }
-
 
 //-----------------------------------------------------------------------------
 int main(int argc, char ** argv)

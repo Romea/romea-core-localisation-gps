@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <string>
 
@@ -23,7 +22,7 @@ namespace
 {
 const double MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION = 5;
 const uint16_t MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX = 6;
-}
+}  // namespace
 
 namespace romea
 {
@@ -34,8 +33,7 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 CheckupGGAFix::CheckupGGAFix(const FixQuality & minimal_fix_quality)
-: minimal_fix_quality_(minimal_fix_quality),
-  report_()
+: minimal_fix_quality_(minimal_fix_quality), report_()
 {
   declare_report_infos_();
 }
@@ -52,7 +50,6 @@ DiagnosticStatus CheckupGGAFix::evaluate(const GGAFrame & gga_frame)
   set_report_infos_(gga_frame);
   return worseStatus(report_.diagnostics);
 }
-
 
 //-----------------------------------------------------------------------------
 void CheckupGGAFix::set_report_infos_(const GGAFrame & gga_frame)
@@ -82,14 +79,10 @@ void CheckupGGAFix::set_report_infos_(const GGAFrame & gga_frame)
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::check_frame_is_complete_(const GGAFrame & gga_frame)
 {
-  if (gga_frame.latitude &&
-    gga_frame.longitude &&
-    gga_frame.altitudeAboveGeoid &&
-    gga_frame.geoidHeight &&
-    gga_frame.horizontalDilutionOfPrecision &&
-    gga_frame.numberSatellitesUsedToComputeFix &&
-    gga_frame.fixQuality)
-  {
+  if (
+    gga_frame.latitude && gga_frame.longitude && gga_frame.altitudeAboveGeoid &&
+    gga_frame.geoidHeight && gga_frame.horizontalDilutionOfPrecision &&
+    gga_frame.numberSatellitesUsedToComputeFix && gga_frame.fixQuality) {
     return true;
   } else {
     add_diagnostic_(DiagnosticStatus::ERROR, "GGA fix is incomplete.");
@@ -100,22 +93,18 @@ bool CheckupGGAFix::check_frame_is_complete_(const GGAFrame & gga_frame)
 //-----------------------------------------------------------------------------
 void CheckupGGAFix::check_fix_is_reliable_(const GGAFrame & gga_frame)
 {
-  if (*gga_frame.fixQuality == FixQuality::SIMULATION_FIX ||
+  if (
+    *gga_frame.fixQuality == FixQuality::SIMULATION_FIX ||
     (check_horizontal_dilution_of_precision_(gga_frame) &
-    check_number_satellites_used_to_compute_fix_(gga_frame) &
-    check_fix_quality_(gga_frame)))
-  {
+     check_number_satellites_used_to_compute_fix_(gga_frame) & check_fix_quality_(gga_frame))) {
     add_diagnostic_(DiagnosticStatus::OK, "GGA fix OK.");
   }
 }
 
-
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::check_horizontal_dilution_of_precision_(const GGAFrame & gga_frame)
 {
-  if (*gga_frame.horizontalDilutionOfPrecision <
-    MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION)
-  {
+  if (*gga_frame.horizontalDilutionOfPrecision < MAXIMAL_HORIZONTAL_DILUTION_OF_PRECISION) {
     return true;
   } else {
     add_diagnostic_(DiagnosticStatus::WARN, "HDOP is two high.");
@@ -126,9 +115,7 @@ bool CheckupGGAFix::check_horizontal_dilution_of_precision_(const GGAFrame & gga
 //-----------------------------------------------------------------------------
 bool CheckupGGAFix::check_number_satellites_used_to_compute_fix_(const GGAFrame & gga_frame)
 {
-  if (*gga_frame.numberSatellitesUsedToComputeFix >=
-    MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX)
-  {
+  if (*gga_frame.numberSatellitesUsedToComputeFix >= MINIMAL_NUMBER_OF_SATELLITES_TO_COMPUTE_FIX) {
     return true;
   } else {
     add_diagnostic_(DiagnosticStatus::WARN, "Not enough satellites to compute fix.");
@@ -163,7 +150,7 @@ void CheckupGGAFix::declare_report_infos_()
 }
 
 //-----------------------------------------------------------------------------
-const DiagnosticReport & CheckupGGAFix::get_report()const
+const DiagnosticReport & CheckupGGAFix::get_report() const
 {
   std::lock_guard<std::mutex> lock(mutex_);
   return report_;

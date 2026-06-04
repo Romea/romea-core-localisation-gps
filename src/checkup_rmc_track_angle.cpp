@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <sstream>
 #include <string>
@@ -29,13 +28,10 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 CheckupRMCTrackAngle::CheckupRMCTrackAngle(const double & minimal_speed_over_ground)
-: minimal_speed_over_ground_(minimal_speed_over_ground),
-  mutex_(),
-  report_()
+: minimal_speed_over_ground_(minimal_speed_over_ground), mutex_(), report_()
 {
   declare_report_infos_();
 }
-
 
 //-----------------------------------------------------------------------------
 DiagnosticStatus CheckupRMCTrackAngle::evaluate(const RMCFrame & rmc_frame)
@@ -72,9 +68,7 @@ const DiagnosticReport & CheckupRMCTrackAngle::get_report() const
 //-----------------------------------------------------------------------------
 bool CheckupRMCTrackAngle::check_frame_is_complete_(const RMCFrame & rmc_frame)
 {
-  if (rmc_frame.speedOverGroundInMeterPerSecond &&
-    rmc_frame.trackAngleTrue)
-  {
+  if (rmc_frame.speedOverGroundInMeterPerSecond && rmc_frame.trackAngleTrue) {
     return true;
   } else {
     set_diagnostic_(DiagnosticStatus::ERROR, "RMC track angle is incomplete.");
@@ -93,8 +87,7 @@ void CheckupRMCTrackAngle::set_report_infos_(const RMCFrame & rmc_frame)
 
 //-----------------------------------------------------------------------------
 void CheckupRMCTrackAngle::set_diagnostic_(
-  const DiagnosticStatus & status,
-  const std::string & message)
+  const DiagnosticStatus & status, const std::string & message)
 {
   report_.diagnostics.clear();
   report_.diagnostics.push_back({status, message});

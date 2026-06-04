@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
@@ -23,21 +22,16 @@
 #include "helper.hpp"
 #include "romea_core_localisation_gps/checkup_hdt_track_angle.hpp"
 
-using namespace romea::core; // NOLINT
+using namespace romea::core;  // NOLINT
 
 class TestHDTTrackAngleDiagnostic : public ::testing::Test
 {
 public:
-  TestHDTTrackAngleDiagnostic()
-  : frame(minimalGoodHDTFrame()),
-    diagnostic()
-  {
-  }
+  TestHDTTrackAngleDiagnostic() : frame(minimalGoodHDTFrame()), diagnostic() {}
 
   HDTFrame frame;
   localisation::CheckupHDTTrackAngle diagnostic;
 };
-
 
 //-----------------------------------------------------------------------------
 TEST_F(TestHDTTrackAngleDiagnostic, checkEmptyReport)
@@ -72,9 +66,7 @@ TEST_F(TestHDTTrackAngleDiagnostic, checkMissingTrackAngle)
 {
   frame.heading.reset();
   EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::ERROR);
-  EXPECT_EQ(
-    diagnostic.get_report().diagnostics.front().status,
-    DiagnosticStatus::ERROR);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::ERROR);
   EXPECT_STREQ(diagnostic.get_report().info.at("track_angle").c_str(), "");
   EXPECT_STREQ(
     diagnostic.get_report().diagnostics.front().message.c_str(), "HDT track angle is incomplete.");

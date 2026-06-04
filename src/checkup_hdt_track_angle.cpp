@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <sstream>
 #include <string>
@@ -28,9 +27,7 @@ namespace localisation
 {
 
 //-----------------------------------------------------------------------------
-CheckupHDTTrackAngle::CheckupHDTTrackAngle()
-: mutex_(),
-  report_()
+CheckupHDTTrackAngle::CheckupHDTTrackAngle() : mutex_(), report_()
 {
   declare_report_infos_();
 }
@@ -73,8 +70,7 @@ void CheckupHDTTrackAngle::set_report_infos_(const HDTFrame & hdt_frame)
 
 //-----------------------------------------------------------------------------
 void CheckupHDTTrackAngle::set_diagnostic_(
-  const DiagnosticStatus & status,
-  const std::string & message)
+  const DiagnosticStatus & status, const std::string & message)
 {
   report_.diagnostics.clear();
   report_.diagnostics.push_back({status, message});

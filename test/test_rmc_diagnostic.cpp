@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
@@ -23,21 +22,16 @@
 #include "helper.hpp"
 #include "romea_core_localisation_gps/checkup_rmc_track_angle.hpp"
 
-using namespace romea::core; // NOLINT
+using namespace romea::core;  // NOLINT
 
 class TestRMCTrackAngleDiagnostic : public ::testing::Test
 {
 public:
-  TestRMCTrackAngleDiagnostic()
-  : frame(minimalGoodRMCFrame()),
-    diagnostic(1)
-  {
-  }
+  TestRMCTrackAngleDiagnostic() : frame(minimalGoodRMCFrame()), diagnostic(1) {}
 
   RMCFrame frame;
   localisation::CheckupRMCTrackAngle diagnostic;
 };
-
 
 //-----------------------------------------------------------------------------
 TEST_F(TestRMCTrackAngleDiagnostic, checkEmptyReport)
@@ -80,13 +74,10 @@ void checkMissingData(
   const std::string & missingDataName)
 {
   EXPECT_EQ(diagnostic.evaluate(frame), DiagnosticStatus::ERROR);
-  EXPECT_EQ(
-    diagnostic.get_report().diagnostics.front().status,
-    DiagnosticStatus::ERROR);
+  EXPECT_EQ(diagnostic.get_report().diagnostics.front().status, DiagnosticStatus::ERROR);
   EXPECT_STREQ(diagnostic.get_report().info.at(missingDataName).c_str(), "");
   EXPECT_STREQ(
-    diagnostic.get_report().diagnostics.front().message.c_str(),
-    "RMC track angle is incomplete.");
+    diagnostic.get_report().diagnostics.front().message.c_str(), "RMC track angle is incomplete.");
 }
 
 //-----------------------------------------------------------------------------

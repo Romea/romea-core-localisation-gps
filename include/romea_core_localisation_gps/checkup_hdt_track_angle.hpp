@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION_GPS__CHECKUP_HDT_TRACK_ANGLE_HPP_
 #define ROMEA_CORE_LOCALISATION_GPS__CHECKUP_HDT_TRACK_ANGLE_HPP_
-
 
 // std
 #include <mutex>
@@ -24,7 +22,6 @@
 // romea
 #include "romea_core_common/diagnostic/DiagnosticReport.hpp"
 #include "romea_core_gps/nmea/HDTFrame.hpp"
-
 
 namespace romea
 {
@@ -40,7 +37,7 @@ public:
 
   DiagnosticStatus evaluate(const HDTFrame & hdt_frame);
 
-  const DiagnosticReport & get_report()const;
+  const DiagnosticReport & get_report() const;
 
   void reset();
 
@@ -59,6 +56,5 @@ private:
 }  // namespace localisation
 }  // namespace core
 }  // namespace romea
-
 
 #endif  // ROMEA_CORE_LOCALISATION_GPS__CHECKUP_HDT_TRACK_ANGLE_HPP_
