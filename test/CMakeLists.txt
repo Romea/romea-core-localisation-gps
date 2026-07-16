@@ -1,26 +1,12 @@
 find_package(GTest REQUIRED)
+include(romea_add_gtest)
 
-add_executable(${PROJECT_NAME}_test_gga_diagnostic test_gga_diagnostic.cpp)
-target_link_libraries(${PROJECT_NAME}_test_gga_diagnostic ${PROJECT_NAME} GTest::GTest GTest::Main)
-target_compile_options(${PROJECT_NAME}_test_gga_diagnostic PRIVATE -std=c++17)
-add_test(test_gga_diagnostic ${PROJECT_NAME}_test_gga_diagnostic)
+romea_add_gtest(test_gga_diagnostic test_gga_diagnostic.cpp LIBRARIES ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_hdt_diagnostic test_hdt_diagnostic.cpp)
-target_link_libraries(${PROJECT_NAME}_test_hdt_diagnostic ${PROJECT_NAME} GTest::GTest GTest::Main)
-target_compile_options(${PROJECT_NAME}_test_hdt_diagnostic PRIVATE -std=c++17)
-add_test(test_hdt_diagnostic ${PROJECT_NAME}_test_hdt_diagnostic)
+romea_add_gtest(test_hdt_diagnostic test_hdt_diagnostic.cpp LIBRARIES ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_rmc_diagnostic test_rmc_diagnostic.cpp)
-target_link_libraries(${PROJECT_NAME}_test_rmc_diagnostic ${PROJECT_NAME} GTest::GTest GTest::Main)
-target_compile_options(${PROJECT_NAME}_test_rmc_diagnostic PRIVATE -std=c++17)
-add_test(test_rmc_diagnostic ${PROJECT_NAME}_test_rmc_diagnostic)
+romea_add_gtest(test_rmc_diagnostic test_rmc_diagnostic.cpp LIBRARIES ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_single_antenna_gps_plugin test_single_antenna_gps_plugin.cpp)
-target_link_libraries(${PROJECT_NAME}_test_single_antenna_gps_plugin ${PROJECT_NAME} GTest::GTest GTest::Main)
-target_compile_options(${PROJECT_NAME}_test_single_antenna_gps_plugin PRIVATE -std=c++17)
-add_test(test_single_antenna_gps_plugin ${PROJECT_NAME}_test_single_antenna_gps_plugin)
+romea_add_gtest(test_single_antenna_gps_plugin test_single_antenna_gps_plugin.cpp LIBRARIES ${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME}_test_dual_antenna_gps_plugin test_dual_antenna_gps_plugin.cpp)
-target_link_libraries(${PROJECT_NAME}_test_dual_antenna_gps_plugin ${PROJECT_NAME} GTest::GTest GTest::Main)
-target_compile_options(${PROJECT_NAME}_test_dual_antenna_gps_plugin PRIVATE -std=c++17)
-add_test(test_dual_antenna_gps_plugin ${PROJECT_NAME}_test_dual_antenna_gps_plugin)
+romea_add_gtest(test_dual_antenna_gps_plugin test_dual_antenna_gps_plugin.cpp LIBRARIES ${PROJECT_NAME})

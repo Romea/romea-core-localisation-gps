@@ -16,6 +16,7 @@
 #define ROMEA_CORE_LOCALISATION_GPS__GPS_PLUGIN_HPP_
 
 // std
+#include <atomic>
 #include <memory>
 #include <string>
 
